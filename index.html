@@ -22,11 +22,12 @@
     <div class="hud-item hud-right">
       <span class="hud-label">Distance walked</span>
       <span id="hudKm" class="hud-value">-</span>
+      <span id="hudClock" class="hud-small"></span>
     </div>
   </div>
 
   <main class="scene">
-    <!-- The whole picture is one SVG. Its own coordinate system is 400 wide x 300 tall. -->
+    <!-- The whole picture is one SVG. Its own coordinate system is 800 wide x 300 tall. -->
     <svg id="scene" viewBox="-200 0 800 300" xmlns="http://www.w3.org/2000/svg" aria-label="A traveller walking between two cities">
 
       <defs>
@@ -40,6 +41,24 @@
            translate() values place each box with its bottom edge on the ground. -->
       <g transform="translate(-190 92)"><g id="cityLeft" class="city-art"></g></g>
       <g transform="translate(430 92)"><g id="cityRight" class="city-art"></g></g>
+
+      <!-- Sky objects. The sun and moon travel across the middle, between the two cities. -->
+      <g id="sky">
+        <g id="stars"></g>
+        <g id="sun" opacity="0">
+          <circle r="30" fill="#ffd35c" opacity="0.18"/>
+          <circle r="21" fill="#ffd35c" opacity="0.30"/>
+          <circle r="14" fill="#ffd966"/>
+        </g>
+        <g id="moon" opacity="0">
+          <circle r="19" fill="#f4f1e1" opacity="0.14"/>
+          <circle r="13" fill="#f4f1e1"/>
+          <circle cx="-4" cy="-3" r="2.6" fill="#dcd8c4"/>
+          <circle cx="4" cy="3" r="3.2" fill="#dcd8c4"/>
+          <circle cx="3" cy="-6" r="1.6" fill="#dcd8c4"/>
+        </g>
+      </g>
+
       <text id="labelLeft"  class="city-label" x="-110" y="288"></text>
       <text id="labelRight" class="city-label" x="510"  y="288"></text>
 
@@ -127,6 +146,30 @@
           </g>
         </g>
       </g>
+
+      <!-- Where he sleeps: a tent with a glowing doorway, his shoes outside, and a little flag.
+           It fades in when he goes to sleep and the man fades out. -->
+      <g id="tent">
+        <ellipse cx="205" cy="263" rx="86" ry="6" fill="rgba(0,0,0,0.18)"/>
+        <path d="M205 140 V154" stroke="#6b4a2a" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M205 140 L224 146 L205 152 Z" fill="#f7f3ea"/>
+        <path d="M118 262 L205 152 L292 262 Z" fill="#d9822b"/>
+        <path d="M205 152 L292 262 L236 262 Z" fill="#b86a1e"/>
+        <path d="M205 186 L178 262 L232 262 Z" fill="#2a1a12"/>
+        <path d="M205 196 L186 262 L224 262 Z" fill="#ffcf70" opacity="0.55"/>
+        <ellipse cx="160" cy="260" rx="12" ry="5.5" fill="#6b422f"/>
+        <ellipse cx="160" cy="263" rx="12" ry="2.6" fill="#f3e5cf"/>
+        <ellipse cx="256" cy="260" rx="12" ry="5.5" fill="#6b422f"/>
+        <ellipse cx="256" cy="263" rx="12" ry="2.6" fill="#f3e5cf"/>
+        <g class="zzz" fill="currentColor">
+          <text class="z z1" x="262" y="146">z</text>
+          <text class="z z2" x="276" y="124">z</text>
+          <text class="z z3" x="294" y="98">Z</text>
+        </g>
+      </g>
+
+      <!-- The dish he is eating. app.js draws the city's dish here and shrinks it as he eats. -->
+      <g id="food"><g id="foodArt"></g></g>
     </svg>
 
     <div class="controls">

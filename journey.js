@@ -66,14 +66,18 @@ function minuteWhenWalked(c) {
   return y;
 }
 
-// What is he doing at minute y of the routine?
-function activityAt(y) {
+// What is he doing at minute y of the routine, and how far through that activity is he (0 to 1)?
+function activityInfoAt(y) {
   let r = ((y % DAY_MIN) + DAY_MIN) % DAY_MIN;
   for (const seg of DAY) {
-    if (r < seg.min) return seg.name;
+    if (r < seg.min) return { name: seg.name, progress: r / seg.min };
     r -= seg.min;
   }
-  return 'walking';
+  return { name: 'walking', progress: 0 };
+}
+
+function activityAt(y) {
+  return activityInfoAt(y).name;
 }
 
 
@@ -118,7 +122,9 @@ function getLeg(i) {
 function journeyAt(nowMs) {
   if (nowMs < LAUNCH_MS) {
     const leg = getLeg(0);
-    return { leg, from: leg.from, to: leg.to, progress: 0, activity: 'waiting', kmInLeg: 0,
+    const y = routineMinute(nowMs, leg.from);
+    return { leg, from: leg.from, to: leg.to, progress: 0, activity: 'waiting', activityProgress: 0,
+             solarMinutes: ((y + 360) % DAY_MIN + DAY_MIN) % DAY_MIN, kmInLeg: 0,
              totalKm: 0, msToArrival: leg.endMs - nowMs, msOnRoad: 0 };
   }
 
@@ -130,11 +136,14 @@ function journeyAt(nowMs) {
   const walked   = walkedBy(y) - leg.startWalked;
   const progress = Math.min(1, Math.max(0, walked / leg.walkMinutes));
   const kmInLeg  = progress * leg.km;
+  const info     = activityInfoAt(y);
 
   return {
     leg, from: leg.from, to: leg.to,
     progress,
-    activity: activityAt(y),                            // 'walking', 'lunch', 'sleeping', ...
+    activity: info.name,                                // 'walking', 'lunch', 'sleeping', ...
+    activityProgress: info.progress,                    // how far through the meal or sleep (0 to 1)
+    solarMinutes: ((y + 360) % DAY_MIN + DAY_MIN) % DAY_MIN,   // local solar time as minutes after midnight
     kmInLeg,
     totalKm: leg.startKm + kmInLeg,
     msToArrival: leg.endMs - nowMs,
@@ -144,5 +153,5 @@ function journeyAt(nowMs) {
 
 // So the file can also be tested outside the browser
 if (typeof module !== 'undefined') {
-  module.exports = { journeyAt, getLeg, walkedBy, minuteWhenWalked, activityAt, LAUNCH_MS, WALK_PER_DAY, DAY };
+  module.exports = { journeyAt, getLeg, walkedBy, minuteWhenWalked, activityAt, activityInfoAt, LAUNCH_MS, WALK_PER_DAY, DAY };
 }

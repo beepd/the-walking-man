@@ -78,11 +78,38 @@ const PUNE_ART = `
   <rect x="0" y="166" width="160" height="4" fill="#8b5f46"/>
 `;
 
+// ---------- Signature dishes ----------
+// Small pictures centred on (0, 0), about 40 units wide. He eats the dish of the city he is closest to.
+
+// Mumbai: vada pav (a spiced potato fritter in a soft bun, with a green chilli)
+const VADA_PAV_ART = `
+  <ellipse cx="0" cy="8" rx="17" ry="7" fill="#d9a05b"/>
+  <ellipse cx="0" cy="2" rx="11" ry="7" fill="#d98c2b"/>
+  <path d="M-17 -1 Q0 -26 17 -1 Z" fill="#efc07a"/>
+  <path d="M-8 -9 Q0 -14 8 -9" fill="none" stroke="#f8dba5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M8 6 q10 -2 14 4" fill="none" stroke="#4f8a3a" stroke-width="3" stroke-linecap="round"/>
+`;
+
+// Pune: misal pav (a spicy sprouts curry topped with crunchy farsan, with a lemon wedge)
+const MISAL_PAV_ART = `
+  <path d="M-17 -2 H17 Q15 15 0 15 Q-15 15 -17 -2 Z" fill="#f1e7d6"/>
+  <ellipse cx="0" cy="-2" rx="17" ry="5.5" fill="#c0392b"/>
+  <g fill="#f2c14e">
+    <circle cx="-8" cy="-4" r="1.8"/><circle cx="-2" cy="-6" r="1.8"/><circle cx="5" cy="-5" r="1.8"/>
+    <circle cx="9" cy="-2" r="1.6"/><circle cx="1" cy="-2" r="1.8"/><circle cx="-11" cy="-1" r="1.5"/>
+  </g>
+  <g fill="#4f8a3a"><circle cx="-5" cy="-5" r="1.1"/><circle cx="3" cy="-7" r="1.1"/><circle cx="7" cy="-6" r="1.1"/></g>
+  <path d="M10 -8 a6 6 0 0 1 7 6 Z" fill="#f4d03f"/>
+`;
+
 // ---------- The journey so far: just two cities for now ----------
 // lon      : longitude in degrees (east is positive). Sets his local solar time: every 15 degrees is one hour.
 // kmToNext : walking distance to the next city in the list. The last city leads back to the first.
 // mode     : 'walk' (default) or 'row' for a sea crossing.
+// dish     : the local food he eats at mealtimes (name and a small picture).
 const CITIES = [
-  { id: 'mumbai', name: 'Mumbai', country: 'India', lat: 18.922, lon: 72.835, kmToNext: 150, art: MUMBAI_ART },
-  { id: 'pune',   name: 'Pune',   country: 'India', lat: 18.520, lon: 73.855, kmToNext: 150, art: PUNE_ART },
+  { id: 'mumbai', name: 'Mumbai', country: 'India', lat: 18.922, lon: 72.835, kmToNext: 150, art: MUMBAI_ART,
+    dish: { name: 'vada pav', art: VADA_PAV_ART } },
+  { id: 'pune',   name: 'Pune',   country: 'India', lat: 18.520, lon: 73.855, kmToNext: 150, art: PUNE_ART,
+    dish: { name: 'misal pav', art: MISAL_PAV_ART } },
 ];

@@ -122,7 +122,16 @@ const STATUS_TEXT = {
   waiting:   'About to set off',
 };
 
+const MEALS = ['breakfast', 'lunch', 'snack', 'dinner'];
+
+const hudClock = document.getElementById('hudClock');
+const starsEl  = document.getElementById('stars');
+const sunEl    = document.getElementById('sun');
+const moonEl   = document.getElementById('moon');
+const foodArt  = document.getElementById('foodArt');
+
 let shownLeg = -1;         // which leg the pictures currently show
+let shownDish = '';        // which dish is drawn in his hand
 
 function showLeg(leg) {
   cityLeft.innerHTML  = leg.from.art;
@@ -133,14 +142,16 @@ function showLeg(leg) {
   shownLeg = leg.index;
 }
 
+let cityDim = 1;           // 1 in daylight, lower at night (set by drawSky)
+
 // progress goes from 0 (just left) to 1 (arriving)
 function drawCities(progress) {
   const leftScale  = 1 - 0.75 * progress;      // 100% -> 25%
   const rightScale = 0.25 + 0.75 * progress;   // 25%  -> 100%
   cityLeft.style.transform  = `scale(${leftScale})`;
   cityRight.style.transform = `scale(${rightScale})`;
-  cityLeft.style.opacity    = 1 - 0.4 * progress;
-  cityRight.style.opacity   = 0.6 + 0.4 * progress;
+  cityLeft.style.opacity    = (1 - 0.4 * progress) * cityDim;
+  cityRight.style.opacity   = (0.6 + 0.4 * progress) * cityDim;
 }
 
 // 93784000 ms  ->  "1d 02h 03m 04s"
@@ -159,10 +170,118 @@ function setText(element, text) {
   if (element.textContent !== text) element.textContent = text;
 }
 
+// ---------- The sky ----------
+// The colours come from his local solar time. Each row is a moment of the day (in hours),
+// and the page blends smoothly between the two rows either side of the current time.
+//   top / bottom : the sky colours      ink    : the text colour at the top (dark by day, light by night)
+//   low          : the text colour for the city names at the bottom (the horizon glows at sunset)
+//   ground       : the dashed road      veil   : how much the cities fade into the sky
+//   stars        : how visible the stars are
+const SKY = [
+  { h: 0,    top: '#0b1026', bottom: '#1b2a4a', low: '#ece7da', ink: '#ece7da', ground: '#56627d', veil: 0.45, stars: 1   },
+  { h: 4.5,  top: '#0e1530', bottom: '#232f55', low: '#ece7da', ink: '#ece7da', ground: '#56627d', veil: 0.42, stars: 1   },
+  { h: 5.5,  top: '#2b3a6e', bottom: '#8a6f9a', low: '#ece7da', ink: '#ece7da', ground: '#6f6a85', veil: 0.25, stars: 0.5 },
+  { h: 6.5,  top: '#6ea3d6', bottom: '#ffc58f', low: '#2b2f36', ink: '#2b2f36', ground: '#9a8f7a', veil: 0.08, stars: 0   },
+  { h: 8,    top: '#a6d3f2', bottom: '#fbefda', low: '#2b2f36', ink: '#2b2f36', ground: '#9a8f7a', veil: 0,    stars: 0   },
+  { h: 11,   top: '#cfe6f5', bottom: '#f6efe2', low: '#2b2f36', ink: '#2b2f36', ground: '#9a8f7a', veil: 0,    stars: 0   },
+  { h: 16,   top: '#cfe6f5', bottom: '#f6efe2', low: '#2b2f36', ink: '#2b2f36', ground: '#9a8f7a', veil: 0,    stars: 0   },
+  { h: 17.5, top: '#a9cde6', bottom: '#f8dcb0', low: '#2b2f36', ink: '#2b2f36', ground: '#9a8f7a', veil: 0.02, stars: 0   },
+  { h: 18.5, top: '#5d72ab', bottom: '#ff9f6b', low: '#2b2f36', ink: '#ece7da', ground: '#8a7f78', veil: 0.15, stars: 0   },
+  { h: 19.5, top: '#232c5c', bottom: '#6b4a7a', low: '#ece7da', ink: '#ece7da', ground: '#6f6a85', veil: 0.33, stars: 0.6 },
+  { h: 20.5, top: '#0e1530', bottom: '#232f55', low: '#ece7da', ink: '#ece7da', ground: '#56627d', veil: 0.42, stars: 1   },
+  { h: 24,   top: '#0b1026', bottom: '#1b2a4a', low: '#ece7da', ink: '#ece7da', ground: '#56627d', veil: 0.45, stars: 1   },
+];
+
+function hexToRgb(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+// Blend two colours: t = 0 gives a, t = 1 gives b
+function mixColour(a, b, t) {
+  const A = hexToRgb(a), B = hexToRgb(b);
+  return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join('');
+}
+
+function skyAt(hour) {
+  let i = 0;
+  while (i < SKY.length - 2 && hour >= SKY[i + 1].h) i++;
+  const a = SKY[i], b = SKY[i + 1];
+  const t = Math.min(1, Math.max(0, (hour - a.h) / (b.h - a.h)));
+  return {
+    top:    mixColour(a.top,    b.top,    t),
+    bottom: mixColour(a.bottom, b.bottom, t),
+    ink:    mixColour(a.ink,    b.ink,    t),
+    low:    mixColour(a.low,    b.low,    t),
+    ground: mixColour(a.ground, b.ground, t),
+    veil:   a.veil  + (b.veil  - a.veil)  * t,
+    stars:  a.stars + (b.stars - a.stars) * t,
+  };
+}
+
+// A few dozen stars at fixed positions (the same on every visit)
+(function makeStars() {
+  let seed = 7;
+  const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  let out = '';
+  for (let i = 0; i < 34; i++) {
+    const x = -190 + random() * 780;
+    const y = 10 + random() * 78;
+    const r = 0.8 + random() * 1.2;
+    const delay = (random() * 4).toFixed(2);
+    out += `<circle class="star" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" style="animation-delay:-${delay}s"/>`;
+  }
+  starsEl.innerHTML = out;
+})();
+
+// Put the sun or moon on its arc. p goes from 0 (rising) to 1 (setting).
+function placeInSky(element, p) {
+  const x = 10 + p * 380;
+  const y = 175 - 105 * Math.sin(Math.PI * p);
+  element.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+  element.setAttribute('opacity', Math.min(1, Math.max(0, Math.min(p, 1 - p) * 14)).toFixed(2));
+}
+
+let lastSkyKey = -1;
+
+function drawSky(solarMinutes) {
+  const key = Math.round(solarMinutes * 2);            // redraw twice a minute, no more
+  if (key === lastSkyKey) return;
+  lastSkyKey = key;
+
+  const hour = solarMinutes / 60;
+  const sky = skyAt(hour);
+
+  const rootStyle = document.documentElement.style;
+  rootStyle.setProperty('--sky-top',    sky.top);
+  rootStyle.setProperty('--sky-bottom', sky.bottom);
+  rootStyle.setProperty('--ink',        sky.ink);
+  rootStyle.setProperty('--ink-low',    sky.low);
+  rootStyle.setProperty('--ground',     sky.ground);
+  cityDim = 1 - sky.veil;                               // at night the cities fade into the dark sky
+  starsEl.setAttribute('opacity', sky.stars.toFixed(2));
+
+  // Sun from 06:00 to 18:00, moon from 18:00 to 06:00
+  if (hour >= 6 && hour < 18) {
+    placeInSky(sunEl, (hour - 6) / 12);
+    moonEl.setAttribute('opacity', '0');
+  } else {
+    placeInSky(moonEl, (hour >= 18 ? hour - 18 : hour + 6) / 12);
+    sunEl.setAttribute('opacity', '0');
+  }
+}
+
+// 865 -> "14:25"
+function formatClock(minutes) {
+  const m = Math.floor(minutes) % 1440;
+  return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+}
+
 function frame() {
   const state = journeyAt(Date.now());
 
   if (state.leg.index !== shownLeg) showLeg(state.leg);
+  drawSky(state.solarMinutes);
   drawCities(state.progress);
 
   // Meals and sleep: stand still, and stop the footsteps
@@ -172,11 +291,31 @@ function frame() {
     scheduleNextStep();            // restart (or stop) the footstep timer
   }
 
+  // Sleeping: the tent appears. Eating: his hand rises to his mouth with the local dish.
+  const sleeping = state.activity === 'sleeping';
+  const eating   = MEALS.includes(state.activity);
+  body.classList.toggle('sleeping', sleeping);
+  body.classList.toggle('eating', eating);
+
+  let dishName = '';
+  if (eating) {
+    const dish = (state.progress < 0.5 ? state.from : state.to).dish;     // the dish of the nearer city
+    dishName = dish.name;
+    if (dish.name !== shownDish) {
+      foodArt.innerHTML = dish.art;
+      shownDish = dish.name;
+    }
+    // The dish gets smaller as the meal goes on
+    foodArt.style.transform = `scale(${(0.62 * (1 - 0.85 * state.activityProgress)).toFixed(3)})`;
+  }
+
+  setText(hudClock, 'Solar time ' + formatClock(state.solarMinutes));
+
   setText(hudElapsed,   formatDuration(state.msOnRoad));
   setText(hudCountdown, formatDuration(state.msToArrival));
   setText(hudKm,        Math.round(state.totalKm).toLocaleString() + ' km');
   const toGo = Math.max(0, Math.round(state.leg.km - state.kmInLeg));
-  setText(hudStatus,    (STATUS_TEXT[state.activity] || '') + '  \u00b7  ' + toGo + ' km to go');
+  setText(hudStatus,    (STATUS_TEXT[state.activity] || '') + (dishName ? ': ' + dishName : '') + '  \u00b7  ' + toGo + ' km to go');
 
   requestAnimationFrame(frame);
 }
