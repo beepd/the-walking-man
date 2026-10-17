@@ -6,7 +6,7 @@
   <title>The Walking Man</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="started">
 
   <!-- The numbers along the top. app.js fills them in every second. -->
   <div class="hud">
@@ -222,18 +222,9 @@
     </svg>
 
     <div class="controls">
-      <button id="toggle" type="button">Pause</button>
-      <button id="sound" type="button">Sound: on</button>
+      <button id="sound" type="button">Tap for sound</button>
     </div>
   </main>
-
-  <!-- Start screen: browsers only allow sound after a tap, so we ask for one -->
-  <div id="start" class="overlay">
-    <h1>The Walking Man</h1>
-    <p>Walking for world peace</p>
-    <button id="startBtn" type="button">Tap to start walking</button>
-    <p class="hint">Best with sound on</p>
-  </div>
 
   <!-- Only shown in demo mode (?demo) -->
   <div id="demoNote" class="demo-note" hidden></div>

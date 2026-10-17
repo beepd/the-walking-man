@@ -4,8 +4,6 @@
 // a short burst of filtered noise (the scuff) plus a quick low thump (the weight).
 
 const body     = document.body;
-const startBtn = document.getElementById('startBtn');
-const pauseBtn = document.getElementById('toggle');
 const soundBtn = document.getElementById('sound');
 
 const STEP_MS = 600;       // one footstep every 0.6s (matches the 'bob' animation in the CSS)
@@ -212,11 +210,10 @@ const DEMO_ON     = demoParam !== null;
 const DEMO_SECONDS = Math.max(10, Number(demoParam) || 60);
 // ?demo&row shows the rowing scene on the demo leg, so you can preview it before any sea leg exists
 const FORCE_ROW   = new URLSearchParams(location.search).has('row');
-let demoStartedAt = null;                    // set when the start button is tapped
+let demoStartedAt = DEMO_ON ? performance.now() : null;   // the demo clock starts as soon as the page loads
 
 function clockNow() {
   if (!DEMO_ON) return Date.now();
-  if (demoStartedAt === null) return LAUNCH_MS;                      // frozen at the launch moment until the tap
   const elapsed    = (performance.now() - demoStartedAt) % (DEMO_SECONDS * 1000);
   return LAUNCH_MS + elapsed * demoSpeedUp();
 }
@@ -597,21 +594,24 @@ requestAnimationFrame(frame);
 
 // ---------- Buttons ----------
 
-startBtn.addEventListener('click', () => {
+// Browsers only allow sound after a tap, so the page starts silent and the first tap anywhere turns it on.
+let audioUnlocked = false;
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
   setUpAudio();                       // must happen inside a tap, or the browser blocks sound
-  body.classList.add('started');      // un-freezes the animations and hides the start screen
-  if (demoStartedAt === null) demoStartedAt = performance.now();
+  soundBtn.textContent = soundOn ? 'Sound: on' : 'Sound: off';
   goFullscreenOnPhones();
   scheduleNextStep();
+  updateSea();
+}
+document.addEventListener('pointerdown', e => {
+  if (!e.target.closest('#sound')) unlockAudio();     // the sound button handles its own first tap
 });
-
-pauseBtn.addEventListener('click', () => {
-  const paused = body.classList.toggle('paused');
-  pauseBtn.textContent = paused ? 'Walk' : 'Pause';
-  scheduleNextStep();                 // stops the timer if paused, restarts it if walking
-});
+document.addEventListener('keydown', unlockAudio);
 
 soundBtn.addEventListener('click', () => {
+  if (!audioUnlocked) { unlockAudio(); return; }      // the first tap only switches the sound on
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? 'Sound: on' : 'Sound: off';
   updateSea();                        // fade the sea in or out with the button
