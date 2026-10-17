@@ -248,6 +248,125 @@ const BANGKOK_ART = `
   <rect x="0" y="166" width="160" height="4" fill="#a39a85"/>
 `;
 
+
+// ---------- Batch 2 of the pictures ----------
+// Phnom Penh: the Royal Palace, tiered golden roofs and a tall spire
+const PHNOMPENH_ART = `
+  <g fill="#e8ddc4"><rect x="14" y="120" width="132" height="46"/></g>
+  <g fill="#d6c7a4"><rect x="14" y="116" width="132" height="6"/></g>
+  <g fill="#e0a82e">
+    <path d="M26 116 L80 90 L134 116Z"/>
+    <path d="M44 98 L80 74 L116 98Z"/>
+    <path d="M58 80 L80 58 L102 80Z"/>
+    <path d="M72 62 L80 22 L88 62Z"/>
+  </g>
+  <g fill="#c0392b">
+    <path d="M26 116 L80 100 L134 116Z" opacity="0.55"/>
+    <path d="M44 98 L80 86 L116 98Z" opacity="0.55"/>
+    <path d="M58 80 L80 70 L102 80Z" opacity="0.55"/>
+  </g>
+  <g fill="#e0a82e">
+    <path d="M10 124 L26 100 L42 124Z"/><path d="M118 124 L134 100 L150 124Z"/>
+    <rect x="25" y="94" width="2" height="8"/><rect x="133" y="94" width="2" height="8"/>
+  </g>
+  <g fill="#8c5a2b">
+    <path d="M62 166 V138 a18 18 0 0 1 36 0 V166Z"/>
+    <rect x="24" y="130" width="10" height="36"/><rect x="126" y="130" width="10" height="36"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#b9a780"/>
+`;
+
+// Hanoi: the One Pillar Pagoda standing in its lotus pond
+const HANOI_ART = `
+  <g fill="#6f9f5a">
+    <circle cx="26" cy="108" r="22"/><circle cx="136" cy="112" r="20"/>
+  </g>
+  <rect x="0" y="146" width="160" height="20" fill="#8fb8a5"/>
+  <g fill="#e5a8b8">
+    <ellipse cx="28" cy="156" rx="9" ry="3"/><ellipse cx="128" cy="157" rx="10" ry="3"/><ellipse cx="108" cy="153" rx="6" ry="2"/>
+  </g>
+  <rect x="73" y="108" width="14" height="40" fill="#8e8a82"/>
+  <rect x="68" y="104" width="24" height="5" fill="#7a766e"/>
+  <g fill="#a8553a">
+    <rect x="62" y="76" width="36" height="28"/>
+  </g>
+  <g fill="#7a3b2a">
+    <path d="M48 78 Q80 82 112 78 L100 62 H60Z"/>
+    <path d="M54 62 Q80 66 106 62 L94 48 H66Z"/>
+    <path d="M62 52 L80 30 L98 52Z"/>
+  </g>
+  <path d="M80 30 V22" stroke="#7a3b2a" stroke-width="2"/>
+  <g fill="#3a1f18"><rect x="74" y="84" width="12" height="20"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#6c8f7e"/>
+`;
+
+// Beijing: the Temple of Heaven, three blue round roofs on a white marble terrace
+const BEIJING_ART = `
+  <g fill="#e9e3d4">
+    <rect x="12" y="152" width="136" height="14"/>
+    <rect x="26" y="138" width="108" height="14"/>
+    <rect x="40" y="126" width="80" height="12"/>
+  </g>
+  <g fill="#cfc7b4"><rect x="12" y="150" width="136" height="3"/><rect x="26" y="136" width="108" height="3"/><rect x="40" y="124" width="80" height="3"/></g>
+  <g fill="#b5443a"><rect x="56" y="96" width="48" height="30"/></g>
+  <g fill="#2f6fa8">
+    <path d="M42 100 Q80 108 118 100 L106 84 H54Z"/>
+    <path d="M50 84 Q80 90 110 84 L100 66 H60Z"/>
+    <path d="M58 68 Q80 72 102 68 L94 44 Q80 24 66 44Z"/>
+  </g>
+  <g fill="#3b86c4">
+    <path d="M42 100 Q80 104 118 100 L116 98 Q80 102 44 98Z"/>
+  </g>
+  <circle cx="80" cy="30" r="5" fill="#e0a82e"/>
+  <g fill="#8a2f28"><rect x="66" y="108" width="6" height="18"/><rect x="88" y="108" width="6" height="18"/><rect x="77" y="108" width="6" height="18"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#bdb49d"/>
+`;
+
+// Seoul: Gwanghwamun, the palace gate, with the Namsan tower behind
+const SEOUL_ART = `
+  <g fill="#a9bccb">
+    <rect x="124" y="70" width="4" height="86"/><rect x="118" y="86" width="16" height="6"/>
+    <path d="M118 96 Q126 108 134 96 L134 150 H118Z"/>
+  </g>
+  <g fill="#9a9690"><rect x="10" y="126" width="140" height="40"/></g>
+  <g fill="#7f7b75"><rect x="10" y="122" width="140" height="6"/></g>
+  <g fill="#3a3530">
+    <path d="M62 166 V146 a18 18 0 0 1 36 0 V166Z"/>
+    <path d="M24 166 V150 a8 8 0 0 1 16 0 V166Z"/><path d="M120 166 V150 a8 8 0 0 1 16 0 V166Z"/>
+  </g>
+  <g fill="#b5443a"><rect x="40" y="96" width="80" height="28"/></g>
+  <g fill="#2f4f5a">
+    <path d="M24 100 Q34 102 40 94 H120 Q126 102 136 100 L120 86 H40Z"/>
+    <path d="M32 70 Q48 74 60 66 H100 Q112 74 128 70 L108 54 H52Z"/>
+  </g>
+  <g fill="#4a6f7a"><rect x="40" y="62" width="80" height="6"/></g>
+  <g fill="#3a1f18"><rect x="56" y="104" width="10" height="18"/><rect x="75" y="104" width="10" height="18"/><rect x="94" y="104" width="10" height="18"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#7f7b75"/>
+`;
+
+// Tokyo: Tokyo Tower, red and white, with city blocks around its foot
+let tokyoTower = '';
+for (let i = 0; i < 6; i++) {
+  const y = 60 + i * 15, half = 4 + i * 4.4;
+  tokyoTower += `<path d="M${80 - half} ${y} L${80 + half + 4.4} ${y + 15} M${80 + half} ${y} L${80 - half - 4.4} ${y + 15}" />`;
+}
+const TOKYO_ART = `
+  <g fill="#a9bccb">
+    <rect x="6"   y="126" width="22" height="40"/><rect x="30"  y="112" width="18" height="54"/>
+    <rect x="112" y="118" width="20" height="48"/><rect x="134" y="130" width="22" height="36"/>
+  </g>
+  <g fill="#8fa3b4">
+    <rect x="48" y="140" width="16" height="26"/><rect x="96" y="142" width="16" height="24"/>
+  </g>
+  <path d="M80 8 L76 60 H84Z" fill="#d9472b"/>
+  <path d="M63 60 H97 L112 166 H100 L80 80 L60 166 H48Z" fill="#e8553a"/>
+  <path d="M54 160 H106" stroke="#e8553a" stroke-width="5"/>
+  <rect x="68" y="88" width="24" height="7" fill="#f4f0e4"/>
+  <rect x="59" y="118" width="42" height="7" fill="#f4f0e4"/>
+  <rect x="56" y="146" width="48" height="7" fill="#f4f0e4"/>
+  <rect x="0" y="166" width="160" height="4" fill="#6a8296"/>
+`;
+
 // ---------- The whole route ----------
 // lon      : longitude in degrees (east is positive). Sets his local solar time: every 15 degrees is one hour.
 // kmToNext : worked out below from the coordinates (walking road is about 20% longer than a straight line).
@@ -262,11 +381,11 @@ const CITIES = [
   { id: 'dhaka',       name: 'Dhaka',        country: 'Bangladesh',   lat: 23.810, lon: 90.412,   art: DHAKA_ART,     dish: { name: 'hilsa curry', art: dishBowl('#d8742c', '#f0e0c0') } },
   { id: 'yangon',      name: 'Yangon',       country: 'Myanmar',      lat: 16.841, lon: 96.173,   art: YANGON_ART,    dish: { name: 'mohinga',    art: dishBowl('#e0b657', '#8fbf5a') } },
   { id: 'bangkok',     name: 'Bangkok',      country: 'Thailand',     lat: 13.756, lon: 100.502,  art: BANGKOK_ART,   dish: { name: 'pad thai',   art: dishPlate('#e8a23a') } },
-  { id: 'phnompenh',   name: 'Phnom Penh',   country: 'Cambodia',     lat: 11.556, lon: 104.928,  dish: { name: 'fish amok',  art: dishBowl('#e9b44c', '#4f8a3a') } },
-  { id: 'hanoi',       name: 'Hanoi',        country: 'Vietnam',      lat: 21.028, lon: 105.854,  dish: { name: 'pho',        art: dishBowl('#d9b77a', '#4f8a3a') } },
-  { id: 'beijing',     name: 'Beijing',      country: 'China',        lat: 39.904, lon: 116.407,  dish: { name: 'dumplings',  art: dishPlate('#f1e7d6', '#c0392b') } },
-  { id: 'seoul',       name: 'Seoul',        country: 'South Korea',  lat: 37.566, lon: 126.978,  dish: { name: 'bibimbap',   art: dishBowl('#f1e7d6', '#c0392b') } },
-  { id: 'tokyo',       name: 'Tokyo',        country: 'Japan',        lat: 35.676, lon: 139.650,  mode: 'row', dish: { name: 'sushi', art: dishPlate('#f1e7d6', '#e8795a') } },
+  { id: 'phnompenh',   name: 'Phnom Penh',   country: 'Cambodia',     lat: 11.556, lon: 104.928, art: PHNOMPENH_ART,  dish: { name: 'fish amok',  art: dishBowl('#e9b44c', '#4f8a3a') } },
+  { id: 'hanoi',       name: 'Hanoi',        country: 'Vietnam',      lat: 21.028, lon: 105.854, art: HANOI_ART,  dish: { name: 'pho',        art: dishBowl('#d9b77a', '#4f8a3a') } },
+  { id: 'beijing',     name: 'Beijing',      country: 'China',        lat: 39.904, lon: 116.407, art: BEIJING_ART,  dish: { name: 'dumplings',  art: dishPlate('#f1e7d6', '#c0392b') } },
+  { id: 'seoul',       name: 'Seoul',        country: 'South Korea',  lat: 37.566, lon: 126.978, art: SEOUL_ART,  dish: { name: 'bibimbap',   art: dishBowl('#f1e7d6', '#c0392b') } },
+  { id: 'tokyo',       name: 'Tokyo',        country: 'Japan',        lat: 35.676, lon: 139.650, art: TOKYO_ART,  mode: 'row', dish: { name: 'sushi', art: dishPlate('#f1e7d6', '#e8795a') } },
   { id: 'vancouver',   name: 'Vancouver',    country: 'Canada',       lat: 49.283, lon: -123.121, dish: { name: 'salmon',     art: dishPlate('#e8795a', '#8fbf5a') } },
   { id: 'losangeles',  name: 'Los Angeles',  country: 'USA',          lat: 34.052, lon: -118.244, dish: { name: 'fish tacos', art: dishPlate('#e8c27a', '#4f8a3a') } },
   { id: 'mexicocity',  name: 'Mexico City',  country: 'Mexico',       lat: 19.433, lon: -99.133,  dish: { name: 'tacos al pastor', art: dishPlate('#e0a43a', '#c0392b') } },
