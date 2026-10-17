@@ -12,8 +12,8 @@
 //      Only the "walking" parts move him forward.
 //   4. We work out the time he arrives at each city, and from that everything else.
 
-// TEMPORARY: a date from last week so there is something to see. Set the real launch moment before publishing.
-const LAUNCH_MS = Date.parse('2026-10-10T06:30:00+05:30');
+// The moment the walk begins: Mumbai, Sunday 18 October 2026, 9:00 AM India time.
+const LAUNCH_MS = Date.parse('2026-10-18T09:00:00+05:30');
 
 const WALK_KMH = 5;      // walking speed
 const ROW_KMH  = 3.5;    // rowing speed (used once we add the sea crossings)

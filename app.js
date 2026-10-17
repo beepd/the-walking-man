@@ -574,7 +574,10 @@ function frame() {
   setText(hudClock, 'Solar time ' + formatClock(state.solarMinutes));
 
   setText(hudElapsed,   formatDuration(state.msOnRoad));
-  setText(hudCountdown, formatDuration(state.msToArrival));
+  // Before the launch the big countdown is the time until he sets off, not the time to Pune
+  const waiting = state.activity === 'waiting';
+  setText(hudNextLabel, waiting ? 'Setting off from ' + state.from.name + ' in' : 'Next stop: ' + state.to.name);
+  setText(hudCountdown, formatDuration(waiting ? LAUNCH_MS - now : state.msToArrival));
   setText(hudKm,        Math.round(state.totalKm).toLocaleString() + ' km');
   const toGo = Math.max(0, Math.round(state.leg.km - state.kmInLeg));
   setText(hudStatus,    ((state.activity === 'walking' && rowing) ? 'Rowing' : (STATUS_TEXT[state.activity] || '')) + (dishName ? ': ' + dishName : '') + '  \u00b7  ' + toGo + ' km to go');
