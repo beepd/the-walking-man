@@ -33,6 +33,8 @@
       <defs>
         <linearGradient id="t-skin"  x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFC17D"/><stop offset="1" stop-color="#F59A51"/></linearGradient>
         <linearGradient id="t-shirt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#87965A"/><stop offset="1" stop-color="#596C3D"/></linearGradient>
+        <radialGradient id="glow-warm"><stop offset="0" stop-color="#ffcf70" stop-opacity="1"/><stop offset="1" stop-color="#ffcf70" stop-opacity="0"/></radialGradient>
+        <radialGradient id="glow-fire"><stop offset="0" stop-color="#ffb347" stop-opacity="1"/><stop offset="1" stop-color="#ff8a2b" stop-opacity="0"/></radialGradient>
         <linearGradient id="t-pack"  x1="0" y1="0" x2="1" y2="1"><stop stop-color="#294765"/><stop offset="1" stop-color="#142B45"/></linearGradient>
       </defs>
 
@@ -212,6 +214,30 @@
           <text class="z z1" x="262" y="146">z</text>
           <text class="z z2" x="276" y="124">z</text>
           <text class="z z3" x="294" y="98">Z</text>
+        </g>
+
+        <!-- Night life on land: light pooling in front of the tent, a small campfire, and fireflies.
+             (All hidden when he sleeps in the boat.) -->
+        <g class="camp">
+          <ellipse class="light-pool" cx="205" cy="263" rx="82" ry="8" fill="url(#glow-warm)"/>
+          <ellipse class="light-halo" cx="205" cy="226" rx="96" ry="66" fill="url(#glow-warm)"/>
+          <g id="fire">
+            <ellipse class="fire-pool" cx="338" cy="263" rx="56" ry="9" fill="url(#glow-fire)"/>
+            <circle class="fire-halo" cx="338" cy="244" r="42" fill="url(#glow-fire)"/>
+            <path d="M320 263 L356 254" stroke="#5a3a22" stroke-width="5" stroke-linecap="round"/>
+            <path d="M320 254 L356 263" stroke="#4a2f1b" stroke-width="5" stroke-linecap="round"/>
+            <g class="flame flame1"><path d="M338 258 Q322 246 332 226 Q335 241 343 231 Q354 246 338 258 Z" fill="#f2872b"/></g>
+            <g class="flame flame2"><path d="M338 258 Q330 249 336 238 Q339 247 344 242 Q348 251 338 258 Z" fill="#ffd45a"/></g>
+          </g>
+          <g class="fireflies">
+            <g transform="translate(112 214)"><g class="ff" style="--d:6.2s;--delay:-0.5s;--dx:12px;--dy:-9px"><circle r="4.5" fill="#f6ee8a" opacity="0.25"/><circle r="1.7" fill="#fbf6a8"/></g></g>
+            <g transform="translate(150 188)"><g class="ff" style="--d:7.4s;--delay:-3.1s;--dx:-10px;--dy:-12px"><circle r="4.5" fill="#f6ee8a" opacity="0.25"/><circle r="1.7" fill="#fbf6a8"/></g></g>
+            <g transform="translate(255 196)"><g class="ff" style="--d:5.6s;--delay:-1.7s;--dx:14px;--dy:6px"><circle r="4.5" fill="#f6ee8a" opacity="0.25"/><circle r="1.7" fill="#fbf6a8"/></g></g>
+            <g transform="translate(300 222)"><g class="ff" style="--d:8.1s;--delay:-4.4s;--dx:-12px;--dy:-8px"><circle r="4.5" fill="#f6ee8a" opacity="0.25"/><circle r="1.7" fill="#fbf6a8"/></g></g>
+            <g transform="translate(372 205)"><g class="ff" style="--d:6.8s;--delay:-2.2s;--dx:9px;--dy:-14px"><circle r="4.5" fill="#f6ee8a" opacity="0.25"/><circle r="1.7" fill="#fbf6a8"/></g></g>
+            <g transform="translate(86 244)"><g class="ff" style="--d:7.0s;--delay:-5.5s;--dx:-8px;--dy:7px"><circle r="4.5" fill="#f6ee8a" opacity="0.25"/><circle r="1.7" fill="#fbf6a8"/></g></g>
+            <g transform="translate(196 170)"><g class="ff" style="--d:5.9s;--delay:-0.9s;--dx:11px;--dy:-6px"><circle r="4.5" fill="#f6ee8a" opacity="0.25"/><circle r="1.7" fill="#fbf6a8"/></g></g>
+          </g>
         </g>
       </g>
 

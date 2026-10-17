@@ -353,6 +353,37 @@ button {
   to   { opacity: 0.62; }
 }
 
+/* ---------- Night on land: lantern light, campfire, fireflies ---------- */
+.light-pool { opacity: 0.5; animation: glow-flicker 2.6s ease-in-out infinite alternate; }
+.light-halo { opacity: 0.3; animation: halo-breathe 4s ease-in-out infinite alternate; }
+@keyframes halo-breathe { from { opacity: 0.22; } to { opacity: 0.4; } }
+
+.fire-pool { opacity: 0.5; animation: fire-glow 0.9s ease-in-out infinite alternate; }
+.fire-halo { opacity: 0.4; animation: fire-glow 1.3s ease-in-out infinite alternate; }
+@keyframes fire-glow { from { opacity: 0.3; } to { opacity: 0.65; } }
+
+.flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: flame-flicker 0.45s ease-in-out infinite alternate;
+}
+.flame2 { animation-duration: 0.33s; animation-delay: -0.1s; }
+@keyframes flame-flicker {
+  from { transform: scale(1, 0.88) skewX(-4deg); }
+  to   { transform: scale(0.94, 1.1) skewX(5deg); }
+}
+
+.ff { animation: firefly var(--d) ease-in-out infinite; animation-delay: var(--delay); }
+@keyframes firefly {
+  0%   { opacity: 0;   transform: translate(0, 0); }
+  20%  { opacity: 1; }
+  45%  { opacity: 0.25; transform: translate(var(--dx), var(--dy)); }
+  70%  { opacity: 1; }
+  100% { opacity: 0;   transform: translate(calc(var(--dx) * -0.5), calc(var(--dy) * -0.4)); }
+}
+/* these are for land only */
+.rowing .camp { display: none; }
+
 /* ---------- Controls ---------- */
 .controls {
   display: flex;

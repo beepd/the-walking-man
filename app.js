@@ -131,11 +131,84 @@ function stopSea() {
   setTimeout(() => old.sources.forEach(node => { try { node.stop(); } catch (e) { /* already stopped */ } }), 1000);
 }
 
+// ---------- Night on land: crickets and a crackling campfire ----------
+// Like the footsteps, these are made on the spot. A chirp is three quick high pulses;
+// a crackle is a tiny burst of filtered noise at random moments.
+let night = null;
+
+function playChirp(freq) {
+  if (!audio || !soundOn) return;
+  const t0 = audio.currentTime;
+  const pan = audio.createStereoPanner();
+  pan.pan.value = Math.random() * 0.8 - 0.4;
+  pan.connect(audio.destination);
+  for (let i = 0; i < 3; i++) {
+    const t = t0 + i * 0.075;
+    const osc = audio.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    const gain = audio.createGain();
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.012, t + 0.012);
+    gain.gain.linearRampToValueAtTime(0, t + 0.04);
+    osc.connect(gain).connect(pan);
+    osc.start(t);
+    osc.stop(t + 0.05);
+  }
+}
+
+function playCrackle() {
+  if (!audio || !soundOn) return;
+  const now = audio.currentTime;
+  const burst = audio.createBufferSource();
+  burst.buffer = noise;
+  const filter = audio.createBiquadFilter();
+  filter.type = 'highpass';
+  filter.frequency.value = 1200 + Math.random() * 1800;
+  const gain = audio.createGain();
+  const peak = 0.015 + Math.random() * 0.03;
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(peak, now + 0.003);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03 + Math.random() * 0.03);
+  burst.connect(filter).connect(gain).connect(audio.destination);
+  burst.start(now);
+  burst.stop(now + 0.1);
+}
+
+// Run `action` again and again at slightly random gaps (in seconds) until the night ends
+function nightLoop(action, minGap, maxGap) {
+  const loop = { id: null };
+  const go = () => {
+    if (night) { action(); loop.id = setTimeout(go, (minGap + Math.random() * (maxGap - minGap)) * 1000); }
+  };
+  loop.id = setTimeout(go, Math.random() * 600);
+  return loop;
+}
+
+function startNight() {
+  if (night || !audio) return;
+  night = { loops: [
+    nightLoop(() => playChirp(4300), 1.0, 1.5),     // one cricket
+    nightLoop(() => playChirp(4750), 1.4, 2.1),     // and another, a little higher and slower
+    nightLoop(playCrackle, 0.15, 0.9),              // the fire
+  ] };
+}
+
+function stopNight() {
+  if (!night) return;
+  night.loops.forEach(l => clearTimeout(l.id));
+  night = null;
+}
+
 // Sea ambience should play only while rowing, with sound on, started, not paused, and the tab visible
 function updateSea() {
   const wanted = body.classList.contains('rowing') && body.classList.contains('started') &&
                  !body.classList.contains('paused') && soundOn && !document.hidden;
   if (wanted) startSea(); else stopSea();
+
+  const nightWanted = body.classList.contains('sleeping') && !body.classList.contains('rowing') && body.classList.contains('started') &&
+                      soundOn && !document.hidden;
+  if (nightWanted) startNight(); else stopNight();
 }
 
 // The oar entering the water: a splash of noise and a soft knock from the oarlock
@@ -553,7 +626,10 @@ function frame() {
     body.classList.toggle('rowing', rowing);
     scheduleNextStep();                                         // footsteps and oar strokes follow different rhythms
   }
-  body.classList.toggle('sleeping', sleeping);
+  if (body.classList.contains('sleeping') !== sleeping) {
+    body.classList.toggle('sleeping', sleeping);
+    updateSea();                                                // start or stop the night sounds
+  }
   body.classList.toggle('eating', eating);
 
   let dishName = '';
