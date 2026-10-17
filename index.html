@@ -81,18 +81,26 @@
       </g>
     </svg>
 
-    <button id="toggle" type="button">Pause</button>
+    <div class="controls">
+      <button id="toggle" type="button">Pause</button>
+      <button id="sound" type="button">Sound: on</button>
+    </div>
   </main>
 
-  <script>
-    // Tiny script: the button adds/removes a CSS class on <body>.
-    // The CSS does the rest (it freezes every animation when the class is present).
-    const button = document.getElementById('toggle');
-    button.addEventListener('click', () => {
-      const paused = document.body.classList.toggle('paused');
-      button.textContent = paused ? 'Walk' : 'Pause';
-    });
-  </script>
+  <!-- Start screen: browsers only allow sound after a tap, so we ask for one -->
+  <div id="start" class="overlay">
+    <h1>The Walking Man</h1>
+    <p>Walking for world peace</p>
+    <button id="startBtn" type="button">Tap to start walking</button>
+    <p class="hint">Best with sound on</p>
+  </div>
+
+  <!-- Shown only on a phone held upright -->
+  <div id="rotate" class="rotate-hint">
+    <p>Rotate your phone to walk with him</p>
+  </div>
+
+  <script src="app.js"></script>
 
 </body>
 </html>

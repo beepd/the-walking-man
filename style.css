@@ -162,6 +162,60 @@ button {
   to   { stroke-dashoffset: 94; }
 }
 
+/* ---------- Start screen and controls ---------- */
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 16px;
+  background: linear-gradient(to bottom, #cfe6f5 0%, #f6efe2 100%);
+}
+
+.overlay h1 { margin: 0; font-size: clamp(28px, 6vw, 48px); color: #2b2f36; }
+.overlay p  { margin: 0; color: #4a525e; }
+.overlay button { margin-top: 14px; padding: 12px 30px; font-size: 18px; }
+.overlay .hint  { font-size: 14px; opacity: 0.8; }
+
+body.started .overlay { display: none; }
+
+/* Until the first tap, every animation is frozen at its starting pose.
+   Because they start frozen, they all begin from zero at the tap, and the sound can follow. */
+body:not(.started) * {
+  animation-play-state: paused !important;
+}
+
+/* A phone held upright: ask the person to turn it sideways */
+.rotate-hint {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  background: #2b2f36;
+  color: #fff;
+  font-size: 20px;
+}
+
+.rotate-hint p { margin: 0; }
+
+@media (orientation: portrait) and (max-width: 700px) {
+  .rotate-hint { display: flex; }
+}
+
 /* ---------- Pause button support ---------- */
 .paused *,
 .paused *::before,
