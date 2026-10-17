@@ -10,10 +10,18 @@
 
   <main class="scene">
     <!-- The whole picture is one SVG. Its own coordinate system is 400 wide x 300 tall. -->
-    <svg id="scene" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-label="A traveller walking">
+    <svg id="scene" viewBox="-200 0 800 300" xmlns="http://www.w3.org/2000/svg" aria-label="A traveller walking between two cities">
+
+      <!-- The city he left (left) and the city he is walking to (right).
+           app.js fills these in. The art is drawn in a 160 x 170 box, so these
+           translate() values place each box with its bottom edge on the ground. -->
+      <g transform="translate(-190 92)"><g id="cityLeft" class="city-art"></g></g>
+      <g transform="translate(430 92)"><g id="cityRight" class="city-art"></g></g>
+      <text id="labelLeft"  class="city-label" x="-110" y="288"></text>
+      <text id="labelRight" class="city-label" x="510"  y="288"></text>
 
       <!-- The ground: a dashed line that slides left, so the man looks like he moves right -->
-      <line class="ground" x1="0" y1="262" x2="400" y2="262"/>
+      <line class="ground" x1="-200" y1="262" x2="600" y2="262"/>
 
       <!-- The man. 'bob' makes the whole body rise and fall slightly with each step -->
       <g class="man">
@@ -100,6 +108,7 @@
     <p>Rotate your phone to walk with him</p>
   </div>
 
+  <script src="cities.js"></script>
   <script src="app.js"></script>
 
 </body>

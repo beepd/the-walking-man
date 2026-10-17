@@ -1,4 +1,4 @@
-// The Walking Man - step 2: start screen, buttons, and footstep sound.
+// The Walking Man - start screen, buttons, footstep sound, and the two cities.
 //
 // The footsteps are not audio files. We make them with the Web Audio API:
 // a short burst of filtered noise (the scuff) plus a quick low thump (the weight).
@@ -94,6 +94,64 @@ function scheduleNextStep(justPlayed = false) {
     scheduleNextStep(true);
   }, wait);
 }
+
+
+// ---------- The two cities ----------
+// On the left is the city he is leaving, on the right the one he is heading to.
+// As he walks, the left one shrinks and the right one grows.
+//
+// TEMPORARY: right now a "leg" is a 40 second demo that loops, so you can see the effect.
+// In the next step this clock is replaced by the real journey timeline.
+
+const DEMO_LEG_SECONDS = 40;
+
+const cityLeft   = document.getElementById('cityLeft');
+const cityRight  = document.getElementById('cityRight');
+const labelLeft  = document.getElementById('labelLeft');
+const labelRight = document.getElementById('labelRight');
+
+let legIndex = 0;          // which city he is leaving (0 = Mumbai)
+let legElapsed = 0;        // seconds walked on this leg
+let lastFrame = null;
+
+function showLeg() {
+  const from = CITIES[legIndex];
+  const to   = CITIES[(legIndex + 1) % CITIES.length];
+  cityLeft.innerHTML  = from.art;
+  cityRight.innerHTML = to.art;
+  labelLeft.textContent  = from.name;
+  labelRight.textContent = to.name;
+}
+
+// progress goes from 0 (just left) to 1 (arriving)
+function drawCities(progress) {
+  const leftScale  = 1 - 0.75 * progress;      // 100% -> 25%
+  const rightScale = 0.25 + 0.75 * progress;   // 25%  -> 100%
+  cityLeft.style.transform  = `scale(${leftScale})`;
+  cityRight.style.transform = `scale(${rightScale})`;
+  cityLeft.style.opacity    = 1 - 0.4 * progress;
+  cityRight.style.opacity   = 0.6 + 0.4 * progress;
+}
+
+function frame(now) {
+  const dt = lastFrame === null ? 0 : Math.min((now - lastFrame) / 1000, 0.1);
+  lastFrame = now;
+
+  const walking = body.classList.contains('started') && !body.classList.contains('paused') && !document.hidden;
+  if (walking) {
+    legElapsed += dt;
+    if (legElapsed >= DEMO_LEG_SECONDS) {      // arrived: the city ahead becomes the city behind
+      legElapsed -= DEMO_LEG_SECONDS;
+      legIndex = (legIndex + 1) % CITIES.length;
+      showLeg();
+    }
+  }
+  drawCities(legElapsed / DEMO_LEG_SECONDS);
+  requestAnimationFrame(frame);
+}
+
+showLeg();
+requestAnimationFrame(frame);
 
 
 // ---------- Buttons ----------
