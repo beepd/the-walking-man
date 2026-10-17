@@ -241,6 +241,16 @@ button {
   50%      { transform: rotate(0deg); }
 }
 
+/* The free arm sits on the far side of the body: its shoulder is moved to the middle of the torso
+   (the wrapper shifts the drawing 45 units back) and it swings around the hanging position,
+   so it shows behind his back when swung back and just peeks out in front when swung forward. */
+.t-arm-back { animation-name: arm-swing-back; }
+@keyframes arm-swing-back {
+  0%, 100% { transform: rotate(62deg); }
+  50%      { transform: rotate(12deg); }
+}
+.rowing .t-arm-wrap { transform: none; }      /* in the boat the arm keeps its original place */
+
 /* The body is lowest when the legs are spread (each footfall) and highest when they pass each other */
 .bob {
   animation: bob 0.6s ease-in-out infinite;
@@ -411,12 +421,28 @@ button {
   .rotate-hint { display: flex; }
 }
 
+/* ---------- The explanation at the bottom ---------- */
+.caption {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  z-index: 4;
+  padding: 0 16px;
+  text-align: center;
+  color: var(--ink-low, #2b2f36);
+  pointer-events: none;
+}
+.caption p { margin: 0; }
+.cap-main { font-size: clamp(11px, 1.7vw, 14px); opacity: 0.85; }
+.cap-now  { font-size: clamp(11px, 1.7vw, 14px); font-weight: 600; margin-top: 2px !important; opacity: 0.95; }
+
 /* ---------- Demo banner ---------- */
 .demo-note {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 8px;
+  top: 70px;
   z-index: 5;
   text-align: center;
   font-size: 12px;

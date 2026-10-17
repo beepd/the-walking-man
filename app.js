@@ -340,6 +340,22 @@ const STATUS_TEXT = {
 const MEALS = ['breakfast', 'lunch', 'snack', 'dinner'];
 
 const hudClock = document.getElementById('hudClock');
+const capNow   = document.getElementById('capNow');
+
+// The line under the picture that tells a newcomer what he is doing right now
+const TOTAL_DAYS = Math.round((getLeg(CITIES.length - 1).endMs - LAUNCH_MS) / 86400000);
+function captionNow(state, rowing, dishName) {
+  const from = state.from.name, to = state.to.name;
+  const day = 'Day ' + (Math.floor(state.msOnRoad / 86400000) + 1) + ' of about ' + TOTAL_DAYS.toLocaleString() + ' \u00b7 ' + CITIES.length + ' cities, one lap of the world';
+  let doing;
+  switch (state.activity) {
+    case 'waiting':  doing = 'He sets off from ' + from + ' on ' + new Date(LAUNCH_MS).toLocaleString([], { dateStyle: 'long', timeStyle: 'short' }); break;
+    case 'sleeping': doing = 'Sleeping: it is night where he is'; break;
+    case 'walking':  doing = rowing ? 'Rowing across the sea from ' + from + ' to ' + to : 'Walking from ' + from + ' to ' + to; break;
+    default:         doing = 'Stopped for ' + state.activity + (dishName ? ': ' + dishName : '') + ', on the way from ' + from + ' to ' + to;
+  }
+  return doing + '  \u00b7  ' + day;
+}
 const starsEl  = document.getElementById('stars');
 const sunEl    = document.getElementById('sun');
 const moonEl   = document.getElementById('moon');
@@ -645,6 +661,7 @@ function frame() {
   }
 
   setText(hudClock, 'Solar time ' + formatClock(state.solarMinutes));
+  setText(capNow, captionNow(state, rowing, dishName));
 
   setText(hudElapsed,   formatDuration(state.msOnRoad));
   // Before the launch the big countdown is the time until he sets off, not the time to Pune
