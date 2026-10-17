@@ -282,6 +282,22 @@ body:not(.started) * {
   .rotate-hint { display: flex; }
 }
 
+/* ---------- Demo banner ---------- */
+.demo-note {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  z-index: 5;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-low, #2b2f36);
+  opacity: 0.75;
+  pointer-events: none;
+}
+.demo-note[hidden] { display: none; }
+
 /* ---------- Pause button support ---------- */
 .paused *,
 .paused *::before,

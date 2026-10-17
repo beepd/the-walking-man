@@ -96,6 +96,25 @@ function scheduleNextStep(justPlayed = false) {
 }
 
 
+// ---------- The clock: real time, or a sped-up demo ----------
+// Open the page with ?demo to watch the first leg (Mumbai to Pune) play in 60 seconds,
+// then loop. Use ?demo=90 for 90 seconds, and so on. Without it, the page uses the real time.
+// The demo starts counting when you tap "start", and everything else behaves as usual.
+
+const demoParam   = new URLSearchParams(location.search).get('demo');
+const DEMO_ON     = demoParam !== null;
+const DEMO_SECONDS = Math.max(10, Number(demoParam) || 60);
+let demoStartedAt = null;                    // set when the start button is tapped
+
+function clockNow() {
+  if (!DEMO_ON) return Date.now();
+  if (demoStartedAt === null) return LAUNCH_MS;                      // frozen at the launch moment until the tap
+  const firstLegMs = getLeg(0).endMs - LAUNCH_MS;                    // how much real journey time the demo covers
+  const speedUp    = firstLegMs / (DEMO_SECONDS * 1000);
+  const elapsed    = (performance.now() - demoStartedAt) % (DEMO_SECONDS * 1000);
+  return LAUNCH_MS + elapsed * speedUp;
+}
+
 // ---------- The two cities, the numbers, and the real clock ----------
 // On the left is the city he is leaving, on the right the one he is heading to.
 // As he walks, the left one shrinks and the right one grows.
@@ -278,7 +297,7 @@ function formatClock(minutes) {
 }
 
 function frame() {
-  const state = journeyAt(Date.now());
+  const state = journeyAt(clockNow());
 
   if (state.leg.index !== shownLeg) showLeg(state.leg);
   drawSky(state.solarMinutes);
@@ -317,7 +336,14 @@ function frame() {
   const toGo = Math.max(0, Math.round(state.leg.km - state.kmInLeg));
   setText(hudStatus,    (STATUS_TEXT[state.activity] || '') + (dishName ? ': ' + dishName : '') + '  \u00b7  ' + toGo + ' km to go');
 
-  requestAnimationFrame(frame);
+  if (DEMO_ON) {
+  const note = document.getElementById('demoNote');
+  const hours = Math.round((getLeg(0).endMs - LAUNCH_MS) / 3600000);
+  note.textContent = `Demo: ${hours} hours of the journey in ${DEMO_SECONDS} seconds`;
+  note.hidden = false;
+}
+
+requestAnimationFrame(frame);
 }
 
 requestAnimationFrame(frame);
@@ -328,6 +354,7 @@ requestAnimationFrame(frame);
 startBtn.addEventListener('click', () => {
   setUpAudio();                       // must happen inside a tap, or the browser blocks sound
   body.classList.add('started');      // un-freezes the animations and hides the start screen
+  if (demoStartedAt === null) demoStartedAt = performance.now();
   goFullscreenOnPhones();
   scheduleNextStep();
 });
