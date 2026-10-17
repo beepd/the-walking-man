@@ -367,6 +367,117 @@ const TOKYO_ART = `
   <rect x="0" y="166" width="160" height="4" fill="#6a8296"/>
 `;
 
+
+// ---------- Batch 3 of the pictures ----------
+// Vancouver: Canada Place with its white sails, snowy mountains behind
+const VANCOUVER_ART = `
+  <path d="M0 110 L34 64 L52 86 L80 44 L112 90 L130 70 L160 112 V150 H0Z" fill="#9fb4c7"/>
+  <path d="M80 44 L68 62 L76 58 L82 66 L90 58 L98 66Z" fill="#f4f8fb"/>
+  <path d="M34 64 L26 76 L34 72 L40 80Z" fill="#f4f8fb"/>
+  <rect x="0" y="146" width="160" height="20" fill="#8fb3c9"/>
+  <rect x="14" y="136" width="132" height="12" fill="#cfd6dc"/>
+  <g fill="#f4f6f8">
+    <path d="M24 136 L40 96 L56 136Z"/>
+    <path d="M50 136 L68 88 L86 136Z"/>
+    <path d="M80 136 L98 92 L116 136Z"/>
+    <path d="M108 136 L124 100 L138 136Z"/>
+  </g>
+  <g fill="#dfe5ea">
+    <path d="M40 96 L56 136 L44 136Z"/><path d="M68 88 L86 136 L74 136Z"/><path d="M98 92 L116 136 L104 136Z"/><path d="M124 100 L138 136 L128 136Z"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#6a8296"/>
+`;
+
+// Los Angeles: Griffith Observatory on its hill, with palm trees
+function palmArt(x, h) {
+  return `<rect x="${x - 1.5}" y="${166 - h}" width="3" height="${h}" fill="#7a5a3a"/>
+    <g fill="#4f8a3a"><path d="M${x} ${166 - h} Q${x - 16} ${166 - h - 4} ${x - 22} ${166 - h + 10}" stroke="#4f8a3a" stroke-width="3" fill="none"/>
+    <path d="M${x} ${166 - h} Q${x + 16} ${166 - h - 4} ${x + 22} ${166 - h + 10}" stroke="#4f8a3a" stroke-width="3" fill="none"/>
+    <path d="M${x} ${166 - h} Q${x - 8} ${166 - h - 14} ${x - 16} ${166 - h - 8}" stroke="#5fa045" stroke-width="3" fill="none"/>
+    <path d="M${x} ${166 - h} Q${x + 8} ${166 - h - 14} ${x + 16} ${166 - h - 8}" stroke="#5fa045" stroke-width="3" fill="none"/></g>`;
+}
+const LOSANGELES_ART = `
+  <path d="M0 166 V120 Q40 96 80 104 Q120 96 160 124 V166Z" fill="#c9b27a"/>
+  <g fill="#f1ece0">
+    <rect x="34" y="92" width="92" height="22"/>
+    <rect x="64" y="86" width="32" height="28"/>
+  </g>
+  <g fill="#e2dccb"><rect x="34" y="110" width="92" height="4"/></g>
+  <g fill="#7fb59c">
+    <path d="M70 86 a10 10 0 0 1 20 0Z"/>
+    <path d="M38 92 a8 8 0 0 1 16 0Z"/><path d="M106 92 a8 8 0 0 1 16 0Z"/>
+  </g>
+  <g fill="#6b8f80"><rect x="79" y="62" width="2" height="12"/></g>
+  <g fill="#3a4b52"><rect x="76" y="98" width="8" height="16"/></g>
+  ${palmArt(28, 78)}
+  ${palmArt(134, 90)}
+  ${palmArt(116, 58)}
+  <rect x="0" y="166" width="160" height="4" fill="#a89562"/>
+`;
+
+// Mexico City: the Angel of Independence, a golden figure on a tall column
+const MEXICOCITY_ART = `
+  <g fill="#e6dccb">
+    <rect x="30" y="152" width="100" height="14"/>
+    <rect x="42" y="140" width="76" height="12"/>
+    <rect x="54" y="128" width="52" height="12"/>
+    <rect x="68" y="60" width="24" height="68"/>
+    <rect x="62" y="54" width="36" height="8"/>
+  </g>
+  <g fill="#cfc4ae"><rect x="68" y="60" width="6" height="68"/><rect x="30" y="150" width="100" height="3"/></g>
+  <g fill="#d9a62e">
+    <circle cx="80" cy="30" r="5"/>
+    <rect x="77" y="34" width="6" height="20"/>
+    <path d="M77 38 Q56 24 46 40 Q62 38 77 46Z"/>
+    <path d="M83 38 Q104 24 114 40 Q98 38 83 46Z"/>
+  </g>
+  <g fill="#7fa650"><circle cx="22" cy="140" r="14"/><circle cx="140" cy="142" r="12"/></g>
+  <g fill="#c9a77a"><rect x="4" y="126" width="22" height="40"/><rect x="134" y="132" width="22" height="34"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#b8ad98"/>
+`;
+
+// Panama City: the glass skyline on the bay, with the sail-shaped tower
+const PANAMA_ART = `
+  <g fill="#9db8c9">
+    <rect x="8"   y="90"  width="22" height="76"/>
+    <rect x="32"  y="64"  width="20" height="102"/>
+    <rect x="108" y="76"  width="22" height="90"/>
+    <rect x="132" y="104" width="20" height="62"/>
+  </g>
+  <g fill="#7f9db0">
+    <rect x="12" y="98" width="4" height="64"/><rect x="38" y="72" width="4" height="94"/>
+  </g>
+  <path d="M60 166 V52 Q86 40 100 60 V166Z" fill="#c9dbe6"/>
+  <path d="M60 52 Q86 40 100 60 V80 Q80 62 60 76Z" fill="#e9f2f7"/>
+  <g stroke="#9db8c9" stroke-width="1.5"><path d="M60 100 H100 M60 124 H100 M60 148 H100"/></g>
+  <rect x="0" y="152" width="160" height="14" fill="#8fb3c9"/>
+  <rect x="0" y="166" width="160" height="4" fill="#6a8296"/>
+`;
+
+// Bogota: Monserrate hill with its white church, and red-roofed houses below
+const BOGOTA_ART = `
+  <path d="M0 120 Q30 84 70 70 Q104 60 130 82 Q150 96 160 118 V150 H0Z" fill="#6f9a6a"/>
+  <path d="M40 100 Q80 66 126 90 V150 H40Z" fill="#5f8a5c" opacity="0.7"/>
+  <g fill="#f4f1e8">
+    <rect x="82" y="50" width="22" height="16"/>
+    <rect x="86" y="42" width="14" height="10"/>
+  </g>
+  <path d="M82 50 L93 40 L104 50Z" fill="#b5443a"/>
+  <path d="M93 40 V32 M89 35 H97" stroke="#f4f1e8" stroke-width="2"/>
+  <path d="M40 150 L88 66" stroke="#4a4a4a" stroke-width="1.2"/>
+  <rect x="62" y="112" width="8" height="6" fill="#e8c27a" transform="rotate(-30 66 115)"/>
+  <g fill="#f1e7d6">
+    <rect x="6" y="130" width="26" height="36"/><rect x="34" y="138" width="22" height="28"/>
+    <rect x="58" y="132" width="26" height="34"/><rect x="88" y="140" width="22" height="26"/>
+    <rect x="112" y="128" width="26" height="38"/><rect x="138" y="138" width="20" height="28"/>
+  </g>
+  <g fill="#b5443a">
+    <path d="M4 130 L19 118 L34 130Z"/><path d="M32 138 L45 128 L58 138Z"/><path d="M56 132 L71 120 L86 132Z"/>
+    <path d="M86 140 L99 130 L112 140Z"/><path d="M110 128 L125 116 L140 128Z"/><path d="M136 138 L148 128 L160 138Z"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#8e8a78"/>
+`;
+
 // ---------- The whole route ----------
 // lon      : longitude in degrees (east is positive). Sets his local solar time: every 15 degrees is one hour.
 // kmToNext : worked out below from the coordinates (walking road is about 20% longer than a straight line).
@@ -386,11 +497,11 @@ const CITIES = [
   { id: 'beijing',     name: 'Beijing',      country: 'China',        lat: 39.904, lon: 116.407, art: BEIJING_ART,  dish: { name: 'dumplings',  art: dishPlate('#f1e7d6', '#c0392b') } },
   { id: 'seoul',       name: 'Seoul',        country: 'South Korea',  lat: 37.566, lon: 126.978, art: SEOUL_ART,  dish: { name: 'bibimbap',   art: dishBowl('#f1e7d6', '#c0392b') } },
   { id: 'tokyo',       name: 'Tokyo',        country: 'Japan',        lat: 35.676, lon: 139.650, art: TOKYO_ART,  mode: 'row', dish: { name: 'sushi', art: dishPlate('#f1e7d6', '#e8795a') } },
-  { id: 'vancouver',   name: 'Vancouver',    country: 'Canada',       lat: 49.283, lon: -123.121, dish: { name: 'salmon',     art: dishPlate('#e8795a', '#8fbf5a') } },
-  { id: 'losangeles',  name: 'Los Angeles',  country: 'USA',          lat: 34.052, lon: -118.244, dish: { name: 'fish tacos', art: dishPlate('#e8c27a', '#4f8a3a') } },
-  { id: 'mexicocity',  name: 'Mexico City',  country: 'Mexico',       lat: 19.433, lon: -99.133,  dish: { name: 'tacos al pastor', art: dishPlate('#e0a43a', '#c0392b') } },
-  { id: 'panama',      name: 'Panama City',  country: 'Panama',       lat: 8.983,  lon: -79.517,  dish: { name: 'sancocho',   art: dishBowl('#d9b45a', '#4f8a3a') } },
-  { id: 'bogota',      name: 'Bogotá',  country: 'Colombia',     lat: 4.711,  lon: -74.072,  dish: { name: 'arepa',      art: dishPlate('#efc873', '#f4f0e4') } },
+  { id: 'vancouver',   name: 'Vancouver',    country: 'Canada',       lat: 49.283, lon: -123.121, art: VANCOUVER_ART, dish: { name: 'salmon',     art: dishPlate('#e8795a', '#8fbf5a') } },
+  { id: 'losangeles',  name: 'Los Angeles',  country: 'USA',          lat: 34.052, lon: -118.244, art: LOSANGELES_ART, dish: { name: 'fish tacos', art: dishPlate('#e8c27a', '#4f8a3a') } },
+  { id: 'mexicocity',  name: 'Mexico City',  country: 'Mexico',       lat: 19.433, lon: -99.133, art: MEXICOCITY_ART,  dish: { name: 'tacos al pastor', art: dishPlate('#e0a43a', '#c0392b') } },
+  { id: 'panama',      name: 'Panama City',  country: 'Panama',       lat: 8.983,  lon: -79.517, art: PANAMA_ART,  dish: { name: 'sancocho',   art: dishBowl('#d9b45a', '#4f8a3a') } },
+  { id: 'bogota',      name: 'Bogotá',  country: 'Colombia',     lat: 4.711,  lon: -74.072, art: BOGOTA_ART,  dish: { name: 'arepa',      art: dishPlate('#efc873', '#f4f0e4') } },
   { id: 'lima',        name: 'Lima',         country: 'Peru',         lat: -12.046, lon: -77.043, dish: { name: 'ceviche',    art: dishBowl('#f1e7d6', '#8fbf5a') } },
   { id: 'santiago',    name: 'Santiago',     country: 'Chile',        lat: -33.449, lon: -70.669, dish: { name: 'empanada',   art: dishRoll('#d9a05b', '#d9a05b') } },
   { id: 'buenosaires', name: 'Buenos Aires', country: 'Argentina',    lat: -34.604, lon: -58.382, dish: { name: 'asado',      art: dishPlate('#8a4a2b', '#c0392b') } },
