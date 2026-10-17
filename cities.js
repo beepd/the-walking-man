@@ -584,6 +584,122 @@ const DAKAR_ART = `
   <rect x="0" y="166" width="160" height="4" fill="#c9b48a"/>
 `;
 
+
+// ---------- Batch 5 of the pictures ----------
+// Accra: the Independence Arch with the Black Star on top
+const ACCRA_ART = `
+  <g fill="#7fa650"><circle cx="16" cy="140" r="16"/><circle cx="146" cy="142" r="14"/></g>
+  <g fill="#e9e1cf">
+    <rect x="22" y="84" width="30" height="82"/>
+    <rect x="108" y="84" width="30" height="82"/>
+    <rect x="22" y="70" width="116" height="20"/>
+  </g>
+  <g fill="#d2c8b0"><rect x="22" y="86" width="116" height="4"/><rect x="22" y="70" width="116" height="3"/></g>
+  <g fill="#c0392b"><rect x="22" y="76" width="116" height="4"/></g>
+  <g fill="#e0a82e"><rect x="22" y="80" width="116" height="3"/></g>
+  <g fill="#2f8a4a"><rect x="22" y="83" width="116" height="3"/></g>
+  <path d="M52 166 V120 Q80 78 108 120 V166Z" fill="#4a7ea8" opacity="0.0"/>
+  <path d="M80 18 L85 33 L101 34 L88 44 L93 60 L80 51 L67 60 L72 44 L59 34 L75 33Z" fill="#1d1d1d"/>
+  <g fill="#c9bfa8"><rect x="22" y="150" width="30" height="16"/><rect x="108" y="150" width="30" height="16"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#b8ad98"/>
+`;
+
+// Casablanca: the Hassan II Mosque, with its tall minaret, beside the sea
+const CASABLANCA_ART = `
+  <rect x="0" y="150" width="160" height="16" fill="#8fb3c9"/>
+  <g fill="#f1ede2">
+    <rect x="96" y="22" width="26" height="128"/>
+    <rect x="94" y="22" width="30" height="6"/>
+    <rect x="14" y="104" width="86" height="46"/>
+  </g>
+  <g fill="#d8d2c2">
+    <rect x="96" y="22" width="5" height="128"/>
+    <rect x="94" y="62" width="30" height="3"/><rect x="94" y="96" width="30" height="3"/>
+  </g>
+  <g fill="#2f8a6f">
+    <path d="M100 22 L109 4 L118 22Z"/>
+    <rect x="108" y="0" width="2" height="6"/>
+    <rect x="14" y="100" width="86" height="6"/>
+  </g>
+  <g fill="#3b9d83"><rect x="18" y="108" width="78" height="3" opacity="0.7"/></g>
+  <g fill="#2f6f6a">
+    <path d="M24 150 V128 a9 9 0 0 1 18 0 V150Z"/><path d="M48 150 V128 a9 9 0 0 1 18 0 V150Z"/><path d="M72 150 V128 a9 9 0 0 1 18 0 V150Z"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#6a8296"/>
+`;
+
+// Lisbon: the Belem Tower on the river
+const LISBON_ART = `
+  <rect x="0" y="146" width="160" height="20" fill="#8fb3c9"/>
+  <g fill="#e6dcc6">
+    <rect x="48" y="62" width="64" height="86"/>
+    <rect x="40" y="132" width="80" height="18"/>
+    <rect x="42" y="52" width="14" height="22"/><rect x="104" y="52" width="14" height="22"/>
+    <rect x="68" y="42" width="24" height="24"/>
+  </g>
+  <g fill="#cfc3a8">
+    <rect x="46" y="60" width="68" height="4"/><rect x="38" y="130" width="84" height="4"/>
+    <rect x="48" y="92" width="64" height="3"/>
+  </g>
+  <g fill="#d9cdb2">
+    ${merlons(50, 110, 54, 6, 4, 6)}
+  </g>
+  <g fill="#b5443a">
+    <path d="M42 52 a7 7 0 0 1 14 0Z"/><path d="M104 52 a7 7 0 0 1 14 0Z"/>
+    <path d="M68 42 L80 26 L92 42Z"/>
+  </g>
+  <g fill="#6b5a3a">
+    <path d="M70 126 V108 a8 8 0 0 1 16 0 V126Z" opacity="0.0"/>
+    <path d="M74 92 V82 a6 6 0 0 1 12 0 V92Z"/><path d="M58 118 V108 a5 5 0 0 1 10 0 V118Z"/><path d="M92 118 V108 a5 5 0 0 1 10 0 V118Z"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#6a8296"/>
+`;
+
+// Madrid: the Puerta de Alcala, a triple arch with sculptures on top
+const MADRID_ART = `
+  <g fill="#7fa650"><circle cx="12" cy="130" r="15"/><circle cx="148" cy="132" r="14"/></g>
+  <g fill="#e6d5b8">
+    <rect x="26" y="82" width="108" height="84"/>
+    <rect x="26" y="70" width="108" height="14"/>
+    <rect x="62" y="52" width="36" height="20"/>
+  </g>
+  <g fill="#cdbb9a">
+    <rect x="22" y="78" width="116" height="6"/><rect x="58" y="66" width="44" height="5"/>
+    <rect x="26" y="110" width="108" height="3"/>
+    <rect x="38" y="82" width="4" height="84"/><rect x="118" y="82" width="4" height="84"/>
+    <rect x="54" y="82" width="4" height="84"/><rect x="102" y="82" width="4" height="84"/>
+  </g>
+  <g fill="#5a4a38">
+    <path d="M62 166 V118 a18 18 0 0 1 36 0 V166Z"/>
+    <path d="M30 166 V132 a6 6 0 0 1 12 0 V166Z"/><path d="M118 166 V132 a6 6 0 0 1 12 0 V166Z"/>
+  </g>
+  <g fill="#d9a62e"><rect x="68" y="42" width="24" height="10"/><circle cx="80" cy="36" r="5"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#b8a888"/>
+`;
+
+// Paris: the Eiffel Tower
+const PARIS_ART = `
+  <g fill="#c9c0ae">
+    <rect x="6" y="126" width="26" height="40"/><rect x="128" y="130" width="26" height="36"/>
+  </g>
+  <g fill="#b5ab97"><rect x="30" y="140" width="20" height="26"/><rect x="110" y="142" width="20" height="24"/></g>
+  <g fill="#8a6a4a">
+    <path d="M80 6 L84 34 H76Z"/>
+    <path d="M75 34 H85 L90 78 H70Z"/>
+    <path d="M70 78 H90 L100 122 H60Z"/>
+    <path d="M60 122 H100 L120 166 H104 Q96 138 80 134 Q64 138 56 166 H40Z"/>
+  </g>
+  <g fill="#6f533a">
+    <rect x="66" y="76" width="28" height="5"/>
+    <rect x="54" y="118" width="52" height="6"/>
+    <path d="M80 6 L82 34 H80Z"/>
+  </g>
+  <g stroke="#6f533a" stroke-width="1.4" fill="none">
+    <path d="M72 38 L88 76 M88 38 L72 76"/><path d="M66 84 L94 120 M94 84 L66 120"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#9b9283"/>
+`;
+
 // ---------- The whole route ----------
 // lon      : longitude in degrees (east is positive). Sets his local solar time: every 15 degrees is one hour.
 // kmToNext : worked out below from the coordinates (walking road is about 20% longer than a straight line).
@@ -613,11 +729,11 @@ const CITIES = [
   { id: 'buenosaires', name: 'Buenos Aires', country: 'Argentina',    lat: -34.604, lon: -58.382, art: BUENOSAIRES_ART, dish: { name: 'asado',      art: dishPlate('#8a4a2b', '#c0392b') } },
   { id: 'rio',         name: 'Rio de Janeiro', country: 'Brazil',     lat: -22.907, lon: -43.173, art: RIO_ART, mode: 'row', dish: { name: 'feijoada', art: dishBowl('#4a3328', '#e8c27a') } },
   { id: 'dakar',       name: 'Dakar',        country: 'Senegal',      lat: 14.716, lon: -17.467, art: DAKAR_ART,  dish: { name: 'thieboudienne', art: dishBowl('#e5894a', '#4f8a3a') } },
-  { id: 'accra',       name: 'Accra',        country: 'Ghana',        lat: 5.604,  lon: -0.187,   dish: { name: 'jollof rice', art: dishBowl('#d9542c', '#f2c14e') } },
-  { id: 'casablanca',  name: 'Casablanca',   country: 'Morocco',      lat: 33.573, lon: -7.589,   mode: 'row', dish: { name: 'couscous', art: dishBowl('#efd48a', '#4f8a3a') } },
-  { id: 'lisbon',      name: 'Lisbon',       country: 'Portugal',     lat: 38.722, lon: -9.139,   dish: { name: 'pastel de nata', art: dishPlate('#efc873', '#f4f0e4') } },
-  { id: 'madrid',      name: 'Madrid',       country: 'Spain',        lat: 40.417, lon: -3.704,   dish: { name: 'churros',    art: dishRoll('#d9a05b', '#d9a05b') } },
-  { id: 'paris',       name: 'Paris',        country: 'France',       lat: 48.857, lon: 2.352,    dish: { name: 'croissant',  art: dishRoll('#d98c2b', '#d98c2b') } },
+  { id: 'accra',       name: 'Accra',        country: 'Ghana',        lat: 5.604,  lon: -0.187, art: ACCRA_ART,   dish: { name: 'jollof rice', art: dishBowl('#d9542c', '#f2c14e') } },
+  { id: 'casablanca',  name: 'Casablanca',   country: 'Morocco',      lat: 33.573, lon: -7.589, art: CASABLANCA_ART,   mode: 'row', dish: { name: 'couscous', art: dishBowl('#efd48a', '#4f8a3a') } },
+  { id: 'lisbon',      name: 'Lisbon',       country: 'Portugal',     lat: 38.722, lon: -9.139, art: LISBON_ART,   dish: { name: 'pastel de nata', art: dishPlate('#efc873', '#f4f0e4') } },
+  { id: 'madrid',      name: 'Madrid',       country: 'Spain',        lat: 40.417, lon: -3.704, art: MADRID_ART,   dish: { name: 'churros',    art: dishRoll('#d9a05b', '#d9a05b') } },
+  { id: 'paris',       name: 'Paris',        country: 'France',       lat: 48.857, lon: 2.352, art: PARIS_ART,    dish: { name: 'croissant',  art: dishRoll('#d98c2b', '#d98c2b') } },
   { id: 'london',      name: 'London',       country: 'UK',           lat: 51.507, lon: -0.128,   dish: { name: 'fish and chips', art: dishPlate('#e0a43a', '#efd48a') } },
   { id: 'amsterdam',   name: 'Amsterdam',    country: 'Netherlands',  lat: 52.370, lon: 4.895,    dish: { name: 'stroopwafel', art: dishPlate('#d9a05b', '#8a5a2b') } },
   { id: 'berlin',      name: 'Berlin',       country: 'Germany',      lat: 52.520, lon: 13.405,   dish: { name: 'currywurst', art: dishPlate('#c0392b', '#d9a05b') } },
