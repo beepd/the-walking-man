@@ -323,9 +323,20 @@ function crowdArt(city, mode) {
   return art + bubbleArt(38, 63, first) + bubbleArt(112, 59, second);
 }
 
+// A wooden pier in the city's 160 x 170 box: it reaches out to both sides, with posts down into the water
+let pierPosts = '';
+for (let x = -70; x <= 230; x += 20) pierPosts += `<rect x="${x}" y="164" width="4" height="14"/>`;
+const PIER_ART = `<g fill="#6b4a2a">${pierPosts}</g>
+  <rect x="-80" y="161" width="320" height="5" fill="#8a6a3e"/>
+  <g stroke="#6b4a2a" stroke-width="0.8"><path d="M-60 161 V166 M-30 161 V166 M0 161 V166 M30 161 V166 M60 161 V166 M90 161 V166 M120 161 V166 M150 161 V166 M180 161 V166 M210 161 V166"/></g>`;
+
 function showLeg(leg) {
-  cityLeft.innerHTML   = leg.from.art;
-  cityRight.innerHTML  = leg.to.art;
+  // Sea legs: a wooden pier under the city he rows away from, and under the city he rows to
+  const prev = leg.index > 0 ? CITIES[(leg.index - 1) % CITIES.length] : null;
+  const pierLeft  = leg.from.mode === 'row' || (prev && prev.mode === 'row');   // also just after arriving by sea
+  const pierRight = leg.from.mode === 'row';
+  cityLeft.innerHTML   = (pierLeft  ? PIER_ART : '') + leg.from.art;
+  cityRight.innerHTML  = (pierRight ? PIER_ART : '') + leg.to.art;
   localsLeft.innerHTML  = crowdArt(leg.from, leg.index === 0 ? 'bye' : 'welcome');   // the crowd that just welcomed him stays
   localsRight.innerHTML = crowdArt(leg.to, 'welcome');
   labelLeft.textContent  = leg.from.name;
@@ -566,7 +577,7 @@ function frame() {
   setText(hudCountdown, formatDuration(state.msToArrival));
   setText(hudKm,        Math.round(state.totalKm).toLocaleString() + ' km');
   const toGo = Math.max(0, Math.round(state.leg.km - state.kmInLeg));
-  setText(hudStatus,    (STATUS_TEXT[state.activity] || '') + (dishName ? ': ' + dishName : '') + '  \u00b7  ' + toGo + ' km to go');
+  setText(hudStatus,    ((state.activity === 'walking' && rowing) ? 'Rowing' : (STATUS_TEXT[state.activity] || '')) + (dishName ? ': ' + dishName : '') + '  \u00b7  ' + toGo + ' km to go');
 
   if (DEMO_ON) {
   const note = document.getElementById('demoNote');
