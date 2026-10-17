@@ -1,0 +1,134 @@
+/* ---------- Page layout ---------- */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  /* soft sky: light at the bottom, a little deeper blue at the top */
+  background: linear-gradient(to bottom, #cfe6f5 0%, #f6efe2 100%);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* The SVG scales to the screen but never gets taller than about 70% of the height */
+#scene {
+  width: min(95vw, 120vh);
+  max-height: 70vh;
+  height: auto;
+}
+
+button {
+  font: inherit;
+  padding: 8px 22px;
+  border: 0;
+  border-radius: 999px;
+  background: #2b2f36;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* ---------- Drawing style ---------- */
+#scene line,
+#scene circle {
+  stroke: #2b2f36;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+#scene .head  { fill: #f2c7a0; }
+#scene .torso { stroke-width: 11; }
+
+/* limbs on the far side of the body are drawn lighter, so you can tell them apart */
+#scene .leg-b line, #scene .arm-b line { stroke: #7d838d; }
+
+#scene .ground {
+  stroke: #9a8f7a;
+  stroke-width: 4;
+  stroke-dasharray: 40 54;          /* 40 dash + 54 gap = 94 per pattern repeat */
+  animation: ground-slide 0.6s linear infinite;
+}
+
+/* ---------- Walking animation ----------
+   One full walk cycle takes 1.2 seconds (two steps).
+   Every moving part rotates around its joint, so we tell CSS where that joint is.
+   The numbers are positions inside the SVG's 400 x 300 drawing space. */
+
+.leg, .shin, .arm, .forearm {
+  transform-box: view-box;
+  animation-duration: 1.2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Thigh pivots at the hip, shin at the knee, arm at the shoulder, forearm at the elbow */
+.leg     { transform-origin: 200px 160px; animation-name: thigh-swing; }
+.shin    { transform-origin: 200px 210px; animation-name: knee-bend; }
+.arm     { transform-origin: 200px 105px; animation-name: arm-swing; }
+.forearm { transform-origin: 200px 140px; animation-name: elbow-bend; }
+
+/* The second leg/arm runs the same motion, but half a cycle later (0.6s) */
+.leg-b, .leg-b .shin,
+.arm-b, .arm-b .forearm {
+  animation-delay: -0.6s;
+}
+
+/* Facing right: a negative angle swings forward, a positive angle swings back */
+@keyframes thigh-swing {
+  0%, 100% { transform: rotate(28deg); }    /* leg back  */
+  50%      { transform: rotate(-28deg); }   /* leg front */
+}
+
+@keyframes knee-bend {
+  0%, 100% { transform: rotate(15deg); }
+  20%      { transform: rotate(60deg); }    /* knee folds while the leg swings through */
+  50%      { transform: rotate(5deg); }
+  75%      { transform: rotate(2deg); }
+}
+
+/* Arm swings the opposite way to the leg on the same side */
+@keyframes arm-swing {
+  0%, 100% { transform: rotate(-25deg); }
+  50%      { transform: rotate(25deg); }
+}
+
+@keyframes elbow-bend {
+  0%, 100% { transform: rotate(-35deg); }
+  50%      { transform: rotate(-10deg); }
+}
+
+/* The body rises a little between steps and dips at each footfall */
+.bob {
+  animation: bob 0.6s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+@keyframes ground-slide {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: 94; }
+}
+
+/* ---------- Pause button support ---------- */
+.paused *,
+.paused *::before,
+.paused *::after {
+  animation-play-state: paused !important;
+}
