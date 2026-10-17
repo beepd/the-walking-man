@@ -8,6 +8,23 @@
 </head>
 <body>
 
+  <!-- The numbers along the top. app.js fills them in every second. -->
+  <div class="hud">
+    <div class="hud-item hud-left">
+      <span class="hud-label">On the road</span>
+      <span id="hudElapsed" class="hud-value">-</span>
+    </div>
+    <div class="hud-item hud-center">
+      <span id="hudNextLabel" class="hud-label">Next stop</span>
+      <span id="hudCountdown" class="hud-big">-</span>
+      <span id="hudStatus" class="hud-small"></span>
+    </div>
+    <div class="hud-item hud-right">
+      <span class="hud-label">Distance walked</span>
+      <span id="hudKm" class="hud-value">-</span>
+    </div>
+  </div>
+
   <main class="scene">
     <!-- The whole picture is one SVG. Its own coordinate system is 400 wide x 300 tall. -->
     <svg id="scene" viewBox="-200 0 800 300" xmlns="http://www.w3.org/2000/svg" aria-label="A traveller walking between two cities">
@@ -109,6 +126,7 @@
   </div>
 
   <script src="cities.js"></script>
+  <script src="journey.js"></script>
   <script src="app.js"></script>
 
 </body>

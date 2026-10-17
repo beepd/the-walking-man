@@ -26,7 +26,7 @@ body {
 /* The SVG scales to the screen but never gets taller than about 70% of the height */
 #scene {
   width: min(95vw, 190vh);
-  max-height: 70vh;
+  max-height: 64vh;
   height: auto;
 }
 
@@ -101,6 +101,43 @@ button {
   text-anchor: middle;
   fill: #2b2f36;
   letter-spacing: 0.5px;
+}
+
+/* ---------- The numbers along the top ---------- */
+.hud {
+  position: fixed;
+  top: 8px;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0 clamp(10px, 3vw, 28px);
+  color: #2b2f36;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;   /* digits all the same width, so the numbers do not jiggle */
+}
+
+.hud-item   { display: flex; flex-direction: column; }
+.hud-left   { flex: 1; align-items: flex-start; }
+.hud-center { flex: 2; align-items: center; text-align: center; }
+.hud-right  { flex: 1; align-items: flex-end; text-align: right; }
+
+.hud-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
+.hud-value { font-size: clamp(13px, 2.2vw, 18px); font-weight: 600; }
+.hud-big   { font-size: clamp(20px, 4.4vw, 34px); font-weight: 700; line-height: 1.1; }
+.hud-small { font-size: 12px; opacity: 0.8; }
+
+/* ---------- Resting (meals and sleep) ----------
+   While he is not walking, we switch the walking animations off.
+   Every limb then falls back to its plain drawn position: a man standing still. */
+.resting .leg, .resting .shin, .resting .arm, .resting .forearm,
+.resting .bob, .resting .scarf-tail {
+  animation: none;
+}
+.resting #scene .ground {
+  animation: none;
 }
 
 /* ---------- Walking animation ----------

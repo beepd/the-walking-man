@@ -79,7 +79,10 @@ const PUNE_ART = `
 `;
 
 // ---------- The journey so far: just two cities for now ----------
+// lon      : longitude in degrees (east is positive). Sets his local solar time: every 15 degrees is one hour.
+// kmToNext : walking distance to the next city in the list. The last city leads back to the first.
+// mode     : 'walk' (default) or 'row' for a sea crossing.
 const CITIES = [
-  { id: 'mumbai', name: 'Mumbai', country: 'India', art: MUMBAI_ART },
-  { id: 'pune',   name: 'Pune',   country: 'India', art: PUNE_ART },
+  { id: 'mumbai', name: 'Mumbai', country: 'India', lat: 18.922, lon: 72.835, kmToNext: 150, art: MUMBAI_ART },
+  { id: 'pune',   name: 'Pune',   country: 'India', lat: 18.520, lon: 73.855, kmToNext: 150, art: PUNE_ART },
 ];

@@ -76,7 +76,7 @@ function playStep() {
 
 function scheduleNextStep(justPlayed = false) {
   clearTimeout(timer);
-  if (!body.classList.contains('started') || body.classList.contains('paused') || document.hidden) return;
+  if (!body.classList.contains('started') || body.classList.contains('paused') || body.classList.contains('resting') || document.hidden) return;
 
   const bob = document.querySelector('.bob').getAnimations()[0];
   if (!bob) return;
@@ -96,31 +96,41 @@ function scheduleNextStep(justPlayed = false) {
 }
 
 
-// ---------- The two cities ----------
+// ---------- The two cities, the numbers, and the real clock ----------
 // On the left is the city he is leaving, on the right the one he is heading to.
 // As he walks, the left one shrinks and the right one grows.
-//
-// TEMPORARY: right now a "leg" is a 40 second demo that loops, so you can see the effect.
-// In the next step this clock is replaced by the real journey timeline.
-
-const DEMO_LEG_SECONDS = 40;
+// Every frame we ask journey.js: "where is he right now?" and redraw from the answer.
 
 const cityLeft   = document.getElementById('cityLeft');
 const cityRight  = document.getElementById('cityRight');
 const labelLeft  = document.getElementById('labelLeft');
 const labelRight = document.getElementById('labelRight');
 
-let legIndex = 0;          // which city he is leaving (0 = Mumbai)
-let legElapsed = 0;        // seconds walked on this leg
-let lastFrame = null;
+const hudElapsed   = document.getElementById('hudElapsed');
+const hudNextLabel = document.getElementById('hudNextLabel');
+const hudCountdown = document.getElementById('hudCountdown');
+const hudStatus    = document.getElementById('hudStatus');
+const hudKm        = document.getElementById('hudKm');
 
-function showLeg() {
-  const from = CITIES[legIndex];
-  const to   = CITIES[(legIndex + 1) % CITIES.length];
-  cityLeft.innerHTML  = from.art;
-  cityRight.innerHTML = to.art;
-  labelLeft.textContent  = from.name;
-  labelRight.textContent = to.name;
+const STATUS_TEXT = {
+  walking:   'Walking',
+  breakfast: 'Having breakfast',
+  lunch:     'Having lunch',
+  snack:     'Evening snack',
+  dinner:    'Having dinner',
+  sleeping:  'Sleeping',
+  waiting:   'About to set off',
+};
+
+let shownLeg = -1;         // which leg the pictures currently show
+
+function showLeg(leg) {
+  cityLeft.innerHTML  = leg.from.art;
+  cityRight.innerHTML = leg.to.art;
+  labelLeft.textContent  = leg.from.name;
+  labelRight.textContent = leg.to.name;
+  hudNextLabel.textContent = 'Next stop: ' + leg.to.name;
+  shownLeg = leg.index;
 }
 
 // progress goes from 0 (just left) to 1 (arriving)
@@ -133,24 +143,44 @@ function drawCities(progress) {
   cityRight.style.opacity   = 0.6 + 0.4 * progress;
 }
 
-function frame(now) {
-  const dt = lastFrame === null ? 0 : Math.min((now - lastFrame) / 1000, 0.1);
-  lastFrame = now;
+// 93784000 ms  ->  "1d 02h 03m 04s"
+function formatDuration(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(total / 86400);
+  const h = Math.floor(total % 86400 / 3600);
+  const m = Math.floor(total % 3600 / 60);
+  const s = total % 60;
+  const two = n => String(n).padStart(2, '0');
+  return (d > 0 ? d + 'd ' : '') + two(h) + 'h ' + two(m) + 'm ' + two(s) + 's';
+}
 
-  const walking = body.classList.contains('started') && !body.classList.contains('paused') && !document.hidden;
-  if (walking) {
-    legElapsed += dt;
-    if (legElapsed >= DEMO_LEG_SECONDS) {      // arrived: the city ahead becomes the city behind
-      legElapsed -= DEMO_LEG_SECONDS;
-      legIndex = (legIndex + 1) % CITIES.length;
-      showLeg();
-    }
+// Only touch the page when the text really changed
+function setText(element, text) {
+  if (element.textContent !== text) element.textContent = text;
+}
+
+function frame() {
+  const state = journeyAt(Date.now());
+
+  if (state.leg.index !== shownLeg) showLeg(state.leg);
+  drawCities(state.progress);
+
+  // Meals and sleep: stand still, and stop the footsteps
+  const resting = state.activity !== 'walking';
+  if (body.classList.contains('resting') !== resting) {
+    body.classList.toggle('resting', resting);
+    scheduleNextStep();            // restart (or stop) the footstep timer
   }
-  drawCities(legElapsed / DEMO_LEG_SECONDS);
+
+  setText(hudElapsed,   formatDuration(state.msOnRoad));
+  setText(hudCountdown, formatDuration(state.msToArrival));
+  setText(hudKm,        Math.round(state.totalKm).toLocaleString() + ' km');
+  const toGo = Math.max(0, Math.round(state.leg.km - state.kmInLeg));
+  setText(hudStatus,    (STATUS_TEXT[state.activity] || '') + '  \u00b7  ' + toGo + ' km to go');
+
   requestAnimationFrame(frame);
 }
 
-showLeg();
 requestAnimationFrame(frame);
 
 
