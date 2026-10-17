@@ -59,11 +59,30 @@
         </g>
       </g>
 
-      <text id="labelLeft"  class="city-label" x="-110" y="288"></text>
-      <text id="labelRight" class="city-label" x="510"  y="288"></text>
+
+      <!-- The sea, used on the legs he rows. The back wave sits behind the boat. -->
+      <g id="sea">
+        <g class="wave wave-back"><path class="sea-back" d="M-2400 265 q20 -10 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 V3000 H-2400 Z"/></g>
+      </g>
 
       <!-- The ground: a dashed line that slides left, so the man looks like he moves right -->
       <line class="ground" x1="-200" y1="262" x2="600" y2="262"/>
+
+      <!-- Everything that sits on the water rocks together, so it all lives in one group.
+           The boat points right (the way he travels). He sits facing the stern, like a real rower. -->
+      <g id="rock">
+
+        <!-- inside of the boat, far side, and the bench he sits on -->
+        <g id="boatBack">
+          <path d="M110 234 L298 222 L296 227 L112 241 Z" fill="#3e2815"/>
+          <rect x="196" y="232" width="48" height="6" rx="2" fill="#8a5a2b"/>
+        </g>
+
+        <!-- far oar, behind him -->
+        <g id="oarFar" class="oar">
+          <line class="oar-shaft" x1="196" y1="192" x2="196" y2="298"/>
+          <path class="oar-blade" d="M190 274 L202 274 L204 304 L188 304 Z"/>
+        </g>
 
       <!-- The man. Soft shadow first, then the traveller.
            'bob' makes the whole body rise and fall with each step.
@@ -75,7 +94,8 @@
         <g class="bob">
           <g transform="translate(47 41) scale(0.255)">
 
-            <!-- backpack, behind everything -->
+            <!-- backpack, behind everything (its own group so it can lean with the body when rowing) -->
+            <g class="t-pack">
             <path d="M425 262 Q425 218 464 203 L535 190 Q570 195 583 231 L601 390 Q604 438 569 459 L467 475 Q434 464 431 427 Z" fill="url(#t-pack)" stroke="#142B45" stroke-width="5"/>
             <path d="M446 255 Q451 224 479 218 L526 210 Q548 214 554 242 L559 275 L441 294 Z" fill="#D76D32"/>
             <path d="M438 300 Q492 273 563 293 L574 370 Q514 395 440 376 Z" fill="#203B59"/>
@@ -83,6 +103,7 @@
             <path d="M456 278 L477 283 L468 338 L449 332 Z M535 273 L555 269 L561 322 L542 328 Z" fill="#E57C3B"/>
             <path d="M458 410 Q489 423 548 408" fill="none" stroke="#3A5672" stroke-width="5" stroke-linecap="round"/>
             <path d="M475 205 Q493 183 519 196 L539 211" fill="none" stroke="#D8793D" stroke-width="8" stroke-linecap="round"/>
+            </g>
 
             <!-- far leg: the leg swings from the hip, the shoe turns at the ankle -->
             <g class="t-leg t-leg-far">
@@ -108,6 +129,8 @@
               </g>
             </g>
 
+            <!-- everything above the hips in one group, so the body can lean forward and back when rowing -->
+            <g class="t-upper">
             <!-- torso, shirt, far arm holding the backpack strap -->
             <path d="M536 239 Q567 218 601 234 L650 263 Q671 284 664 322 L643 405 L651 516 Q618 543 560 531 L526 516 L516 410 L501 314 Q500 270 536 239 Z" fill="url(#t-shirt)" stroke="#4D6037" stroke-width="5"/>
             <path d="M563 246 L610 250 L620 506 Q593 516 570 505 L558 321 Z" fill="#F7F1E5"/>
@@ -143,9 +166,23 @@
             <path d="M565 237 L584 254 L570 274 L552 249 Z" fill="#6B7D49"/>
             <path d="M605 240 L620 251 L613 274 L594 252 Z" fill="#657744"/>
 
+            </g>
           </g>
         </g>
       </g>
+
+        <!-- the near side of the boat hangs in front of his legs, with the near oar on top -->
+        <g id="boatFront">
+          <path d="M106 238 L300 226 Q292 262 252 272 L142 272 Q112 266 106 238 Z" fill="#b5702f"/>
+          <path d="M106 238 L300 226" fill="none" stroke="#7a4a1f" stroke-width="4" stroke-linecap="round"/>
+          <path d="M112 251 L292 241" fill="none" stroke="#f4ead2" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="184" cy="233" r="3.4" fill="#4a3a2a"/>
+        </g>
+        <g id="oarNear" class="oar">
+          <line class="oar-shaft" x1="184" y1="192" x2="184" y2="296"/>
+          <path class="oar-blade" d="M178 272 L190 272 L192 302 L176 302 Z"/>
+          <circle class="oar-grip" cx="184" cy="192" r="3.6"/>
+        </g>
 
       <!-- Where he sleeps: a tent with a glowing doorway, his shoes outside, and a little flag.
            It fades in when he goes to sleep and the man fades out. -->
@@ -156,7 +193,7 @@
         <path d="M118 262 L205 152 L292 262 Z" fill="#d9822b"/>
         <path d="M205 152 L292 262 L236 262 Z" fill="#b86a1e"/>
         <path d="M205 186 L178 262 L232 262 Z" fill="#2a1a12"/>
-        <path d="M205 196 L186 262 L224 262 Z" fill="#ffcf70" opacity="0.55"/>
+        <path class="tent-glow" d="M205 196 L186 262 L224 262 Z" fill="#ffcf70" opacity="0.55"/>
         <ellipse cx="160" cy="260" rx="12" ry="5.5" fill="#6b422f"/>
         <ellipse cx="160" cy="263" rx="12" ry="2.6" fill="#f3e5cf"/>
         <ellipse cx="256" cy="260" rx="12" ry="5.5" fill="#6b422f"/>
@@ -170,6 +207,16 @@
 
       <!-- The dish he is eating. app.js draws the city's dish here and shrinks it as he eats. -->
       <g id="food"><g id="foodArt"></g></g>
+
+      </g><!-- end of rock -->
+
+      <!-- The front wave hides the bottom of the boat and the oar blades, so they sit in the water -->
+      <g id="seaFront">
+        <g class="wave wave-front"><path class="sea-front" d="M-2400 267 q30 -8 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 V3000 H-2400 Z"/></g>
+      </g>
+
+      <text id="labelLeft"  class="city-label" x="-110" y="288"></text>
+      <text id="labelRight" class="city-label" x="510"  y="288"></text>
     </svg>
 
     <div class="controls">

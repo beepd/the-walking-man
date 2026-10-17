@@ -4,6 +4,7 @@
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;      /* the page never scrolls; the sea is allowed to spill past the edges */
 }
 
 body {
@@ -23,8 +24,10 @@ body {
   gap: 12px;
 }
 
-/* The SVG scales to the screen but never gets taller than about 70% of the height */
+/* The SVG scales to the screen but never gets taller than about 70% of the height.
+   overflow: visible lets the sea run past the edges of the picture, right across the page. */
 #scene {
+  overflow: visible;
   width: min(95vw, 190vh);
   max-height: 64vh;
   height: auto;
@@ -227,6 +230,107 @@ button {
   50%      { transform: translateY(-11px); }   /* straight legs reach lower than striding ones, so the body rises to keep the feet on the ground */
 }
 
+
+/* ---------- Rowing ----------
+   On the sea legs the page switches to rowing: waves instead of the road, a boat, and the
+   traveller sitting facing the stern (so we flip him), leaning back and forth with each stroke.
+   One stroke takes 3 seconds: the drive (blade in the water, hands pulled in) is the first
+   40 percent, then the recovery (leaning forward, hands out) is the rest. */
+
+#sea, #seaFront, #boatBack, #boatFront, #oarNear, #oarFar {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.rowing #sea, .rowing #boatBack, .rowing #boatFront, .rowing #oarNear, .rowing #oarFar { opacity: 1; }
+.rowing #seaFront { opacity: 0.88; }          /* a little see-through, so you can make out the oar blades */
+
+#scene .ground { transition: opacity 0.8s ease; }
+.rowing #scene .ground,
+.rowing #scene .shadow { opacity: 0; }
+
+/* City names sit on the water while rowing, so they get light text */
+.rowing #scene .city-label { fill: #f4f8fb; }
+
+#scene .sea-back  { fill: var(--sea-back,  #6fb1d1); }
+#scene .sea-front { fill: var(--sea-front, #3a86b0); }
+
+/* The waves slide left, one full wavelength per loop, so the sea seems to pass behind the boat */
+.wave-back  { animation: wave-slide-back  5s   linear infinite; }
+.wave-front { animation: wave-slide-front 3.4s linear infinite; }
+@keyframes wave-slide-back  { from { transform: translateX(0); } to { transform: translateX(-80px);  } }
+@keyframes wave-slide-front { from { transform: translateX(0); } to { transform: translateX(-120px); } }
+
+/* Boat, tent and rower all rock gently together */
+#rock { transform-box: view-box; transform-origin: 200px 268px; }
+.rowing #rock { animation: boat-rock 4.2s ease-in-out infinite; }
+@keyframes boat-rock {
+  0%, 100% { transform: rotate(-1.1deg) translateY(0); }
+  50%      { transform: rotate(1.1deg)  translateY(-1.5px); }
+}
+
+/* The oars: a stick that turns around the oarlock on the boat's edge */
+#scene .oar-shaft { stroke: #d9b98a; stroke-width: 4; stroke-linecap: round; }
+#scene .oar-blade { fill: #c9a06a; }
+#scene .oar-grip  { fill: #6b4423; }
+#oarFar  { transform-box: view-box; transform-origin: 196px 230px; }
+#oarNear { transform-box: view-box; transform-origin: 184px 232px; }
+#oarFar .oar-shaft  { stroke: #b99a70; }
+#oarFar .oar-blade  { fill: #a9865a; }
+.rowing #oarNear, .rowing #oarFar { animation: oar-stroke 3s ease-in-out infinite; }
+
+@keyframes oar-stroke {
+  0%, 100% { transform: rotate(-32deg); }      /* the catch: the blade drops in at the front */
+  40%      { transform: rotate(32deg); }       /* the finish: the blade is swept to the back */
+}
+
+/* The rower: flipped to face the stern, lowered into the boat, legs stretched out ahead */
+.rowing .man {
+  transform: translate(9px, 42px) scale(-1, 1);
+  transform-box: view-box;
+  transform-origin: 200px 0px;
+}
+.rowing .bob          { animation: none; transform: none; }
+.rowing .t-leg-far    { animation: none; transform: rotate(-118deg); }
+.rowing .t-leg-near   { animation: none; transform: rotate(-60deg); }
+.rowing .t-shoe       { animation: none; transform: none; }
+
+/* The whole upper body (and the backpack) leans around the hips, the arm swings to follow the oar */
+.rowing .t-upper, .rowing .t-pack {
+  transform-box: view-box;
+  transform-origin: 580px 552px;
+  animation: row-lean 3s ease-in-out infinite;
+}
+.rowing .t-arm { animation: row-arm 3s ease-in-out infinite; }
+
+@keyframes row-lean {
+  0%, 100% { transform: rotate(14deg); }       /* leaning forward at the catch */
+  40%      { transform: rotate(-14deg); }      /* leaning back at the finish */
+}
+@keyframes row-arm {
+  0%, 100% { transform: rotate(-20deg); }      /* arms out in front */
+  40%      { transform: rotate(25deg); }       /* hands pulled in to the belly */
+}
+
+/* Meals and sleep on the boat: stop rowing, sit upright, oars rest */
+.rowing.resting .t-upper, .rowing.resting .t-pack { animation: none; transform: rotate(0deg); }
+.rowing.resting .t-arm { animation: none; transform: rotate(34deg); }
+.rowing.eating  .t-arm { transform: rotate(-116deg); }
+.rowing.resting #oarNear, .rowing.resting #oarFar { animation: none; transform: rotate(-8deg); }
+
+/* The tent shrinks and sits on the deck; his dish moves to where his hand now is */
+.rowing #tent {
+  transform: translate(0, -26px) scale(0.6);
+  transform-box: view-box;
+  transform-origin: 205px 263px;
+}
+.rowing #food { transform: translate(174px, 130px); }
+
+/* The lantern glow in the tent flickers a little */
+.tent-glow { animation: glow-flicker 2.6s ease-in-out infinite alternate; }
+@keyframes glow-flicker {
+  from { opacity: 0.38; }
+  to   { opacity: 0.62; }
+}
 
 /* ---------- Start screen and controls ---------- */
 .controls {

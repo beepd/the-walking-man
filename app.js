@@ -9,6 +9,7 @@ const pauseBtn = document.getElementById('toggle');
 const soundBtn = document.getElementById('sound');
 
 const STEP_MS = 600;       // one footstep every 0.6s (matches the 'bob' animation in the CSS)
+const STROKE_MS = 3000;    // one oar stroke every 3s (matches the 'oar-stroke' animation in the CSS)
 
 let audio = null;          // the AudioContext; created on the first tap
 let noise = null;          // a reusable buffer of white noise
@@ -70,27 +71,132 @@ function playStep() {
 }
 
 
+// ---------- Sea sounds ----------
+// While rowing there is a gentle background of waves and breeze, and a splash with each oar stroke.
+// Both are made from noise: the waves are low rumble that swells and fades slowly,
+// the breeze is a soft hiss that comes and goes even more slowly.
+
+let sea = null;            // the running ambience: { master, sources }
+
+function makeLoopingNoise(seconds) {
+  const buffer = audio.createBuffer(1, Math.floor(audio.sampleRate * seconds), audio.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  const source = audio.createBufferSource();
+  source.buffer = buffer;
+  source.loop = true;
+  return source;
+}
+
+// One layer of sea sound: noise -> filter -> volume that a slow wobble raises and lowers
+function seaLayer(filterType, frequency, q, baseVolume, wobbleDepth, wobbleHz, destination) {
+  const noiseSource = makeLoopingNoise(3);
+  const filter = audio.createBiquadFilter();
+  filter.type = filterType;
+  filter.frequency.value = frequency;
+  filter.Q.value = q;
+  const volume = audio.createGain();
+  volume.gain.value = baseVolume;
+
+  const wobble = audio.createOscillator();         // the slow swell
+  wobble.frequency.value = wobbleHz;
+  const wobbleAmount = audio.createGain();
+  wobbleAmount.gain.value = wobbleDepth;
+  wobble.connect(wobbleAmount).connect(volume.gain);
+
+  noiseSource.connect(filter).connect(volume).connect(destination);
+  noiseSource.start();
+  wobble.start();
+  return [noiseSource, wobble];
+}
+
+function startSea() {
+  if (sea || !audio) return;
+  const master = audio.createGain();
+  master.gain.value = 0;
+  master.gain.linearRampToValueAtTime(1, audio.currentTime + 1.5);   // fade in
+  master.connect(audio.destination);
+  const sources = [
+    ...seaLayer('lowpass',  420, 0.7, 0.07, 0.05, 0.11, master),     // waves
+    ...seaLayer('bandpass', 750, 0.5, 0.022, 0.015, 0.07, master),   // breeze
+  ];
+  sea = { master, sources };
+}
+
+function stopSea() {
+  if (!sea) return;
+  const old = sea;
+  sea = null;
+  old.master.gain.cancelScheduledValues(audio.currentTime);
+  old.master.gain.setValueAtTime(old.master.gain.value, audio.currentTime);
+  old.master.gain.linearRampToValueAtTime(0, audio.currentTime + 0.8);   // fade out, then switch off
+  setTimeout(() => old.sources.forEach(node => { try { node.stop(); } catch (e) { /* already stopped */ } }), 1000);
+}
+
+// Sea ambience should play only while rowing, with sound on, started, not paused, and the tab visible
+function updateSea() {
+  const wanted = body.classList.contains('rowing') && body.classList.contains('started') &&
+                 !body.classList.contains('paused') && soundOn && !document.hidden;
+  if (wanted) startSea(); else stopSea();
+}
+
+// The oar entering the water: a splash of noise and a soft knock from the oarlock
+function playStroke() {
+  if (!audio || !soundOn) return;
+  const now = audio.currentTime;
+
+  const splash = audio.createBufferSource();
+  splash.buffer = noise;
+  const filter = audio.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 1400;
+  const splashGain = audio.createGain();
+  splashGain.gain.setValueAtTime(0, now);
+  splashGain.gain.linearRampToValueAtTime(0.13, now + 0.02);
+  splashGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+  splash.connect(filter).connect(splashGain).connect(audio.destination);
+  splash.start(now);
+  splash.stop(now + 0.15);
+
+  const knock = audio.createOscillator();
+  knock.type = 'sine';
+  knock.frequency.setValueAtTime(150, now);
+  knock.frequency.exponentialRampToValueAtTime(80, now + 0.07);
+  const knockGain = audio.createGain();
+  knockGain.gain.setValueAtTime(0.0001, now);
+  knockGain.gain.exponentialRampToValueAtTime(0.09, now + 0.01);
+  knockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+  knock.connect(knockGain).connect(audio.destination);
+  knock.start(now);
+  knock.stop(now + 0.12);
+}
+
+
 // ---------- Keeping the sound in time with the walk ----------
 // Instead of running our own clock, we ask the CSS animation where it is right now
 // and wait until it reaches the next footfall. If the animation pauses, so does the sound.
 
 function scheduleNextStep(justPlayed = false) {
   clearTimeout(timer);
+  updateSea();                                         // the sea ambience follows the same on/off conditions
   if (!body.classList.contains('started') || body.classList.contains('paused') || body.classList.contains('resting') || document.hidden) return;
 
-  const bob = document.querySelector('.bob').getAnimations()[0];
-  if (!bob) return;
+  // Walking has a footstep every 0.6s, rowing has an oar stroke every 3s.
+  const rowing   = body.classList.contains('rowing');
+  const period   = rowing ? STROKE_MS : STEP_MS;
+  const animated = (rowing ? document.getElementById('oarNear') : document.querySelector('.bob')).getAnimations()[0];
+  if (!animated) return;
 
-  const phase = Number(bob.currentTime) % STEP_MS;   // how far into the current step we are
-  let wait = STEP_MS - phase;                        // time left until the foot lands
+  const phase = Number(animated.currentTime) % period;   // how far into the current step or stroke we are
+  let wait = period - phase;                           // time left until the foot lands (or the blade drops in)
 
   // The timer can fire a few milliseconds before the animation reaches the footfall.
-  // Then "time left" would be tiny and we would play the same step twice.
-  // So right after a step, if the next footfall looks too close, aim for the one after it.
-  if (justPlayed && wait < STEP_MS / 2) wait += STEP_MS;
+  // Then "time left" would be tiny and we would play the same sound twice.
+  // So right after a sound, if the next one looks too close, aim for the one after it.
+  if (justPlayed && wait < period / 2) wait += period;
 
   timer = setTimeout(() => {
-    playStep();
+    if (rowing) playStroke(); else playStep();
     scheduleNextStep(true);
   }, wait);
 }
@@ -104,6 +210,8 @@ function scheduleNextStep(justPlayed = false) {
 const demoParam   = new URLSearchParams(location.search).get('demo');
 const DEMO_ON     = demoParam !== null;
 const DEMO_SECONDS = Math.max(10, Number(demoParam) || 60);
+// ?demo&row shows the rowing scene on the demo leg, so you can preview it before any sea leg exists
+const FORCE_ROW   = new URLSearchParams(location.search).has('row');
 let demoStartedAt = null;                    // set when the start button is tapped
 
 function clockNow() {
@@ -165,8 +273,8 @@ let cityDim = 1;           // 1 in daylight, lower at night (set by drawSky)
 
 // progress goes from 0 (just left) to 1 (arriving)
 function drawCities(progress) {
-  const leftScale  = 1 - 0.75 * progress;      // 100% -> 25%
-  const rightScale = 0.25 + 0.75 * progress;   // 25%  -> 100%
+  const leftScale  = 1 - 0.65 * progress;      // 100% -> 35%
+  const rightScale = 0.35 + 0.65 * progress;   // 35%  -> 100%
   cityLeft.style.transform  = `scale(${leftScale})`;
   cityRight.style.transform = `scale(${rightScale})`;
   cityLeft.style.opacity    = (1 - 0.4 * progress) * cityDim;
@@ -280,6 +388,11 @@ function drawSky(solarMinutes) {
   cityDim = 1 - sky.veil;                               // at night the cities fade into the dark sky
   starsEl.setAttribute('opacity', sky.stars.toFixed(2));
 
+  // The sea gets darker with the night, in step with the cities fading
+  const night = Math.min(1, sky.veil / 0.45);
+  rootStyle.setProperty('--sea-back',  mixColour('#6fb1d1', '#1d3563', night));
+  rootStyle.setProperty('--sea-front', mixColour('#3a86b0', '#12254a', night));
+
   // Sun from 06:00 to 18:00, moon from 18:00 to 06:00
   if (hour >= 6 && hour < 18) {
     placeInSky(sunEl, (hour - 6) / 12);
@@ -313,6 +426,11 @@ function frame() {
   // Sleeping: the tent appears. Eating: his hand rises to his mouth with the local dish.
   const sleeping = state.activity === 'sleeping';
   const eating   = MEALS.includes(state.activity);
+  const rowing = FORCE_ROW || state.from.mode === 'row';       // is this a sea leg?
+  if (body.classList.contains('rowing') !== rowing) {
+    body.classList.toggle('rowing', rowing);
+    scheduleNextStep();                                         // footsteps and oar strokes follow different rhythms
+  }
   body.classList.toggle('sleeping', sleeping);
   body.classList.toggle('eating', eating);
 
@@ -368,6 +486,7 @@ pauseBtn.addEventListener('click', () => {
 soundBtn.addEventListener('click', () => {
   soundOn = !soundOn;
   soundBtn.textContent = soundOn ? 'Sound: on' : 'Sound: off';
+  updateSea();                        // fade the sea in or out with the button
 });
 
 // Do not make noise in a background tab
