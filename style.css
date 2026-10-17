@@ -137,8 +137,13 @@ button {
 
 /* Eating: the near hand comes up to his mouth, and the dish appears there.
    (-116 degrees from the drawn pose brings the hand up in front of his face.) */
-.t-arm { transition: transform 0.6s ease; }
+.t-arm { transition: transform 0.6s ease; filter: brightness(0.88); }   /* a touch darker: it is the arm on the far side */
 .eating .t-arm { transform: rotate(-116deg); }
+/* Walking: the free arm is the one behind the body. Eating: a copy in front brings the food to his mouth.
+   visibility (not display) keeps the arm's movement smooth when the copies swap. */
+.t-arm-front { visibility: hidden; }
+.eating .t-arm-front { visibility: visible; }
+.eating .t-arm-back  { visibility: hidden; }
 
 #food {
   opacity: 0;
