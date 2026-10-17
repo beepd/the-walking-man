@@ -217,10 +217,28 @@ let demoStartedAt = null;                    // set when the start button is tap
 function clockNow() {
   if (!DEMO_ON) return Date.now();
   if (demoStartedAt === null) return LAUNCH_MS;                      // frozen at the launch moment until the tap
-  const firstLegMs = getLeg(0).endMs - LAUNCH_MS;                    // how much real journey time the demo covers
-  const speedUp    = firstLegMs / (DEMO_SECONDS * 1000);
   const elapsed    = (performance.now() - demoStartedAt) % (DEMO_SECONDS * 1000);
-  return LAUNCH_MS + elapsed * speedUp;
+  return LAUNCH_MS + elapsed * demoSpeedUp();
+}
+
+// The demo plays the whole first leg, plus a few seconds of the next one so the arrival can be seen to the end.
+const DEMO_AFTER_SECONDS = 8;
+function demoSpeedUp() {
+  const firstLegMs = getLeg(0).endMs - LAUNCH_MS;
+  return firstLegMs / ((DEMO_SECONDS - DEMO_AFTER_SECONDS) * 1000);   // journey milliseconds per real millisecond
+}
+
+// ---------- The arrival: how long each part lasts (in seconds of real time) ----------
+//   welcome  : the locals come out and wave this long before he reaches the city
+//   locFade  : how long they take to appear
+//   slide    : the city slides past behind him (he walks through the town)
+//   leave    : the locals keep waving this long after arrival, then fade away
+//   cityFade : the next destination fades in on the right
+// In the demo everything is shorter, and is sped up like the rest of the journey.
+const BEATS_S = DEMO_ON ? { welcome: 9, locFade: 1.5, slide: 6, leave: 6, cityFade: 3 }
+                        : { welcome: 90, locFade: 6, slide: 40, leave: 30, cityFade: 15 };
+function beatMs(name) {
+  return BEATS_S[name] * 1000 * (DEMO_ON ? demoSpeedUp() : 1);
 }
 
 // ---------- The two cities, the numbers, and the real clock ----------
@@ -260,25 +278,120 @@ const foodArt  = document.getElementById('foodArt');
 let shownLeg = -1;         // which leg the pictures currently show
 let shownDish = '';        // which dish is drawn in his hand
 
+const localsLeft  = document.getElementById('localsLeft');
+const localsRight = document.getElementById('localsRight');
+
+// ---------- The welcome crowd ----------
+// Drawn in the same 160 x 170 box as the city, so it grows and shrinks with it.
+const LOCAL_LOOKS = [
+  { shirt: '#d9534f', skin: '#c68642', hair: '#1f1a17' },
+  { shirt: '#3b8ea5', skin: '#e0ac69', hair: '#2b1d14' },
+  { shirt: '#f0b429', skin: '#8d5524', hair: '#111111' },
+  { shirt: '#7a5ea8', skin: '#f1c27d', hair: '#4a2f1b' },
+  { shirt: '#4f9d69', skin: '#a9743f', hair: '#1b1b1b' },
+];
+
+function personArt(x, height, look, delay) {
+  const s = height / 100;
+  return `<g transform="translate(${x} 166) scale(${s.toFixed(3)})">
+    <rect x="-8" y="-46" width="6" height="46" rx="3" fill="#33425b"/>
+    <rect x="2"  y="-46" width="6" height="46" rx="3" fill="#33425b"/>
+    <rect x="-16" y="-80" width="5" height="28" rx="2.5" fill="${look.skin}"/>
+    <path d="M-11 -48 Q-12 -80 -6 -84 H6 Q12 -80 11 -48 Z" fill="${look.shirt}"/>
+    <g class="wave" style="animation-delay:-${delay}s"><rect x="9" y="-112" width="5" height="30" rx="2.5" fill="${look.skin}"/></g>
+    <rect x="-3" y="-90" width="6" height="8" fill="${look.skin}"/>
+    <circle cx="0" cy="-98" r="10" fill="${look.skin}"/>
+    <path d="M-10.5 -98 Q-10 -110 0 -110 Q10 -110 10.5 -98 Q4 -103 -10.5 -98Z" fill="${look.hair}"/>
+  </g>`;
+}
+
+function bubbleArt(x, tailY, lines) {
+  const w = Math.max(...lines.map(l => l.length)) * 5 + 10;
+  const h = lines.length * 11 + 5;
+  const top = tailY - h;
+  return `<g class="bubble"><rect x="${(x - w / 2).toFixed(1)}" y="${top}" width="${w}" height="${h}" rx="5"/>
+    <path d="M${x - 3} ${tailY - 1} L${x + 3} ${tailY - 1} L${x} ${tailY + 6}Z"/>` +
+    lines.map((l, i) => `<text x="${x}" y="${top + 10 + i * 11}">${l}</text>`).join('') + '</g>';
+}
+
+// mode 'welcome': locals greet him in their own language.  mode 'bye': they see him off at the very start.
+function crowdArt(city, mode) {
+  const people = [[16, 52, 0, 0.0], [38, 85, 1, 0.3], [62, 78, 2, 0.6], [110, 88, 3, 0.15], [134, 54, 4, 0.45]];
+  const art = people.map(p => personArt(p[0], p[1], LOCAL_LOOKS[p[2]], p[3])).join('');
+  const first  = mode === 'welcome' ? [city.hello] : ['Safe travels!'];
+  const second = mode === 'welcome' ? ['Welcome to', city.name + '!'] : ['Come back soon!'];
+  return art + bubbleArt(38, 63, first) + bubbleArt(112, 59, second);
+}
+
 function showLeg(leg) {
-  cityLeft.innerHTML  = leg.from.art;
-  cityRight.innerHTML = leg.to.art;
+  cityLeft.innerHTML   = leg.from.art;
+  cityRight.innerHTML  = leg.to.art;
+  localsLeft.innerHTML  = crowdArt(leg.from, leg.index === 0 ? 'bye' : 'welcome');   // the crowd that just welcomed him stays
+  localsRight.innerHTML = crowdArt(leg.to, 'welcome');
   labelLeft.textContent  = leg.from.name;
   labelRight.textContent = leg.to.name;
   hudNextLabel.textContent = 'Next stop: ' + leg.to.name;
+  bigLeft  = bigScaleFor(cityLeft);
+  bigRight = bigScaleFor(cityRight);
   shownLeg = leg.index;
+}
+
+// How big a city gets on arrival: its drawn height ends up about 235 units, taller than he is (about 205).
+// Short drawings are scaled up more, but never beyond 1.9 x or below 1.4 x.
+let bigLeft = 1.5, bigRight = 1.5;
+function bigScaleFor(group) {
+  try {
+    const h = 166 - group.getBBox().y;
+    return h > 20 ? Math.min(1.9, Math.max(1.4, 235 / h)) : 1.5;
+  } catch (e) { return 1.5; }
 }
 
 let cityDim = 1;           // 1 in daylight, lower at night (set by drawSky)
 
-// progress goes from 0 (just left) to 1 (arriving)
-function drawCities(progress) {
-  const leftScale  = 1 - 0.65 * progress;      // 100% -> 35%
-  const rightScale = 0.35 + 0.65 * progress;   // 35%  -> 100%
-  cityLeft.style.transform  = `scale(${leftScale})`;
-  cityRight.style.transform = `scale(${rightScale})`;
-  cityLeft.style.opacity    = (1 - 0.4 * progress) * cityDim;
-  cityRight.style.opacity   = (0.6 + 0.4 * progress) * cityDim;
+// The destination city grows until it is bigger than he is (1.4 x), then slides past behind him
+// and becomes the city he has left. Positions are the centre of each city, in scene units.
+const CITY_SMALL = 0.35, GROUND_Y = 258;
+const FAR_RIGHT = 510, NEAR_RIGHT = 440, NEAR_LEFT = -70, FAR_LEFT = -110;   // city centres, in scene units
+const lerp   = (a, b, t) => a + (b - a) * t;
+const smooth = t => { t = Math.min(1, Math.max(0, t)); return t * t * (3 - 2 * t); };
+
+function placeCity(group, locals, label, cx, scale, opacity, localsOpacity) {
+  const t = `translate(${cx.toFixed(1)} ${GROUND_Y}) scale(${scale.toFixed(3)}) translate(-80 -170)`;
+  group.setAttribute('transform', t);
+  locals.setAttribute('transform', t);
+  group.style.opacity  = opacity;
+  locals.style.opacity = localsOpacity;
+  label.setAttribute('x', cx.toFixed(1));
+}
+
+// progress goes from 0 (just left) to 1 (arrived). msToArrival and msSinceStart drive the welcome.
+function drawCities(progress, msToArrival, msSinceStart, legIndex) {
+  let scaleL = bigLeft - (bigLeft - CITY_SMALL) * progress;
+  let scaleR = CITY_SMALL + (bigRight - CITY_SMALL) * progress;
+  let cxL = lerp(NEAR_LEFT, FAR_LEFT, progress);
+  let cxR = lerp(FAR_RIGHT, NEAR_RIGHT, progress);
+
+  // The last stretch: the city slides left, behind him
+  let bubbleVisible = 1;
+  const slideLen = beatMs('slide');
+  if (msToArrival < slideLen) {
+    const e = smooth(1 - msToArrival / slideLen);
+    cxR    = lerp(NEAR_RIGHT, NEAR_LEFT, e);
+    scaleR = bigRight;
+    cxL    = lerp(cxL, -520, e);
+    // The speech bubbles melt away while the town passes the countdown in the middle, and return on the left
+    bubbleVisible = e < 0.75 ? 1 - smooth(e / 0.2) : smooth((e - 0.75) / 0.25);
+  }
+  localsRight.style.setProperty('--bubble', bubbleVisible.toFixed(2));
+
+  // The crowd waves from shortly before he arrives, and for a while after
+  const welcome  = msToArrival < beatMs('welcome') ? smooth((beatMs('welcome') - msToArrival) / beatMs('locFade')) : 0;
+  const farewell = 1 - smooth(msSinceStart / beatMs('leave'));
+  const nextFade = legIndex > 0 ? smooth(msSinceStart / beatMs('cityFade')) : 1;   // the next destination fades in
+
+  placeCity(cityLeft,  localsLeft,  labelLeft,  cxL, scaleL, (1 - 0.4 * progress) * cityDim, farewell * cityDim);
+  placeCity(cityRight, localsRight, labelRight, cxR, scaleR, (0.6 + 0.4 * progress) * cityDim * nextFade, welcome * cityDim);
+  labelRight.style.opacity = nextFade;
 }
 
 // 93784000 ms  ->  "1d 02h 03m 04s"
@@ -410,11 +523,12 @@ function formatClock(minutes) {
 }
 
 function frame() {
-  const state = journeyAt(clockNow());
+  const now   = clockNow();
+  const state = journeyAt(now);
 
   if (state.leg.index !== shownLeg) showLeg(state.leg);
   drawSky(state.solarMinutes);
-  drawCities(state.progress);
+  drawCities(state.progress, state.msToArrival, Math.max(0, now - state.leg.startMs), state.leg.index);
 
   // Meals and sleep: stand still, and stop the footsteps
   const resting = state.activity !== 'walking';
@@ -456,7 +570,7 @@ function frame() {
 
   if (DEMO_ON) {
   const note = document.getElementById('demoNote');
-  const hours = Math.round((getLeg(0).endMs - LAUNCH_MS) / 3600000);
+  const hours = Math.round(demoSpeedUp() * DEMO_SECONDS * 1000 / 3600000);
   note.textContent = `Demo: ${hours} hours of the journey in ${DEMO_SECONDS} seconds`;
   note.hidden = false;
 }

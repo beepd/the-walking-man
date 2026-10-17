@@ -77,6 +77,22 @@ button {
   letter-spacing: 0.5px;
 }
 
+/* ---------- The locals who welcome him ---------- */
+.wave {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;          /* swings from the shoulder */
+  animation: wave-hand 0.8s ease-in-out infinite alternate;
+}
+@keyframes wave-hand {
+  from { transform: rotate(-22deg); }
+  to   { transform: rotate(26deg); }
+}
+.bubble { opacity: var(--bubble, 1); }
+.bubble rect, .bubble path { fill: #fff; opacity: 0.96; }
+.bubble text {
+  fill: #2b2f36; font-size: 9px; font-weight: 600; text-anchor: middle;
+}
+
 /* ---------- The numbers along the top ---------- */
 .hud {
   position: fixed;

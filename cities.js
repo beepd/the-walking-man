@@ -305,3 +305,15 @@ CITIES.forEach((c, i) => {
   if (!c.art) c.art = placeholderArt(i * 977 + 13);
   c.kmToNext = Math.round(greatCircleKm(c, next) * (c.mode === 'row' ? 1.0 : 1.2) / 10) * 10;
 });
+
+// ---------- How the locals greet him when he arrives ----------
+const HELLO = {
+  mumbai: 'Namaste!', pune: 'Namaskar!', hyderabad: 'Adaab!', kolkata: 'Nomoshkar!', dhaka: 'Shagotom!',
+  yangon: 'Mingalaba!', bangkok: 'Sawasdee!', phnompenh: 'Suosdei!', hanoi: 'Xin chào!', beijing: 'Nǐ hǎo!',
+  seoul: 'Annyeong!', tokyo: 'Irasshai!', vancouver: 'Welcome!', losangeles: 'Hey there!', mexicocity: '¡Bienvenido!',
+  panama: '¡Hola!', bogota: '¡Bienvenido!', lima: '¡Hola, amigo!', santiago: '¡Bienvenido!', buenosaires: '¡Che, hola!',
+  rio: 'Bem-vindo!', dakar: 'Nanga def!', accra: 'Akwaaba!', casablanca: 'Marhaba!', lisbon: 'Bem-vindo!',
+  madrid: '¡Hola!', paris: 'Bonjour!', london: 'Hello, mate!', amsterdam: 'Welkom!', berlin: 'Willkommen!',
+  vienna: 'Servus!', rome: 'Benvenuto!', athens: 'Yia sou!', istanbul: 'Hoş geldin!', tbilisi: 'Gamarjoba!', dubai: 'Ahlan!',
+};
+CITIES.forEach(c => { c.hello = HELLO[c.id] || 'Welcome!'; });
