@@ -660,7 +660,7 @@ function frame() {
     foodArt.style.transform = `scale(${(0.62 * (1 - 0.85 * state.activityProgress)).toFixed(3)})`;
   }
 
-  setText(hudClock, 'Solar time ' + formatClock(state.solarMinutes));
+  setText(hudClock, 'Time where he is: ' + formatClock(state.solarMinutes));
   setText(capNow, captionNow(state, rowing, dishName));
 
   setText(hudElapsed,   formatDuration(state.msOnRoad));
