@@ -434,6 +434,7 @@ button {
   pointer-events: none;
 }
 .caption p { margin: 0; }
+.rowing .caption { color: #f4f8fb; text-shadow: 0 1px 3px rgba(0, 20, 40, 0.45); }   /* over the water */
 .cap-main { font-size: clamp(11px, 1.7vw, 14px); opacity: 0.85; }
 .cap-now  { font-size: clamp(11px, 1.7vw, 14px); font-weight: 600; margin-top: 2px !important; opacity: 0.95; }
 

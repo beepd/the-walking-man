@@ -346,13 +346,21 @@ const capNow   = document.getElementById('capNow');
 const TOTAL_DAYS = Math.round((getLeg(CITIES.length - 1).endMs - LAUNCH_MS) / 86400000);
 function captionNow(state, rowing, dishName) {
   const from = state.from.name, to = state.to.name;
-  const day = 'Day ' + (Math.floor(state.msOnRoad / 86400000) + 1) + ' of about ' + TOTAL_DAYS.toLocaleString() + ' \u00b7 ' + CITIES.length + ' cities, one lap of the world';
+
+  // Which lap of the world, and which day of that lap (he goes round again after Dubai -> Mumbai -> Pune)
+  const lap      = Math.floor(state.leg.index / CITIES.length);
+  const lapStart = lap === 0 ? LAUNCH_MS : getLeg(lap * CITIES.length - 1).endMs;
+  const nowMs    = LAUNCH_MS + state.msOnRoad;
+  const dayInLap = Math.min(TOTAL_DAYS, Math.floor((nowMs - lapStart) / 86400000) + 1);
+  const day = (lap > 0 ? 'Lap ' + (lap + 1) + ' \u00b7 ' : '') + 'Day ' + dayInLap + ' of about ' + TOTAL_DAYS.toLocaleString() +
+              ' \u00b7 ' + CITIES.length + ' cities';
+  const trip = from + ' to ' + to;
   let doing;
   switch (state.activity) {
     case 'waiting':  doing = 'He sets off from ' + from + ' on ' + new Date(LAUNCH_MS).toLocaleString([], { dateStyle: 'long', timeStyle: 'short' }); break;
     case 'sleeping': doing = 'Sleeping: it is night where he is'; break;
-    case 'walking':  doing = rowing ? 'Rowing across the sea from ' + from + ' to ' + to : 'Walking from ' + from + ' to ' + to; break;
-    default:         doing = 'Stopped for ' + state.activity + (dishName ? ': ' + dishName : '') + ', on the way from ' + from + ' to ' + to;
+    case 'walking':  doing = (rowing ? 'Rowing from ' : 'Walking from ') + trip; break;
+    default:         doing = 'Meal break' + (dishName ? ': ' + dishName : '') + ' \u00b7 ' + trip;
   }
   return doing + '  \u00b7  ' + day;
 }
@@ -395,18 +403,19 @@ function bubbleArt(x, tailY, lines) {
   const w = Math.max(...lines.map(l => l.length)) * 5 + 10;
   const h = lines.length * 11 + 5;
   const top = tailY - h;
-  return `<g class="bubble"><rect x="${(x - w / 2).toFixed(1)}" y="${top}" width="${w}" height="${h}" rx="5"/>
+  // drawn a little smaller (0.85) around the bubble's tail, so it stays clear of the numbers at the top
+  return `<g class="bubble" transform="translate(${x} ${tailY}) scale(0.85) translate(${-x} ${-tailY})"><rect x="${(x - w / 2).toFixed(1)}" y="${top}" width="${w}" height="${h}" rx="5"/>
     <path d="M${x - 3} ${tailY - 1} L${x + 3} ${tailY - 1} L${x} ${tailY + 6}Z"/>` +
     lines.map((l, i) => `<text x="${x}" y="${top + 10 + i * 11}">${l}</text>`).join('') + '</g>';
 }
 
 // mode 'welcome': locals greet him in their own language.  mode 'bye': they see him off at the very start.
 function crowdArt(city, mode) {
-  const people = [[16, 52, 0, 0.0], [38, 85, 1, 0.3], [62, 78, 2, 0.6], [110, 88, 3, 0.15], [134, 54, 4, 0.45]];
+  const people = [[4, 52, 0, 0.0], [26, 85, 1, 0.3], [50, 78, 2, 0.6], [96, 88, 3, 0.15], [120, 54, 4, 0.45]];
   const art = people.map(p => personArt(p[0], p[1], LOCAL_LOOKS[p[2]], p[3])).join('');
   const first  = mode === 'welcome' ? [city.hello] : ['Safe travels!'];
   const second = mode === 'welcome' ? ['Welcome to', city.name + '!'] : ['Come back soon!'];
-  return art + bubbleArt(38, 63, first) + bubbleArt(112, 59, second);
+  return art + bubbleArt(26, 66, first) + bubbleArt(90, 62, second);
 }
 
 // A wooden pier in the city's 160 x 170 box: it reaches out to both sides, with posts down into the water
@@ -540,6 +549,22 @@ function mixColour(a, b, t) {
   return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join('');
 }
 
+// How bright a colour looks (0 black ... 1 white), and which text colour contrasts best with it
+function luminance(hex) {
+  const [r, g, b] = hexToRgb(hex).map(v => {
+    v /= 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+const INK_DARK = '#2b2f36', INK_LIGHT = '#f4efe3';
+function readableOn(background) {
+  const L = luminance(background);
+  const contrastDark  = (L + 0.05) / (luminance(INK_DARK) + 0.05);
+  const contrastLight = (luminance(INK_LIGHT) + 0.05) / (L + 0.05);
+  return contrastDark >= contrastLight ? INK_DARK : INK_LIGHT;
+}
+
 function skyAt(hour) {
   let i = 0;
   while (i < SKY.length - 2 && hour >= SKY[i + 1].h) i++;
@@ -592,8 +617,10 @@ function drawSky(solarMinutes) {
   const rootStyle = document.documentElement.style;
   rootStyle.setProperty('--sky-top',    sky.top);
   rootStyle.setProperty('--sky-bottom', sky.bottom);
-  rootStyle.setProperty('--ink',        sky.ink);
-  rootStyle.setProperty('--ink-low',    sky.low);
+  // Text colour: whichever of dark or light reads better against the sky right now (blending the two
+  // would pass through a grey that vanishes against the dusk and dawn colours)
+  rootStyle.setProperty('--ink',        readableOn(sky.top));
+  rootStyle.setProperty('--ink-low',    readableOn(sky.bottom));
   rootStyle.setProperty('--ground',     sky.ground);
   cityDim = 1 - sky.veil;                               // at night the cities fade into the dark sky
   starsEl.setAttribute('opacity', sky.stars.toFixed(2));
