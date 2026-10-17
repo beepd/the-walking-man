@@ -29,6 +29,12 @@
     <!-- The whole picture is one SVG. Its own coordinate system is 400 wide x 300 tall. -->
     <svg id="scene" viewBox="-200 0 800 300" xmlns="http://www.w3.org/2000/svg" aria-label="A traveller walking between two cities">
 
+      <defs>
+        <linearGradient id="t-skin"  x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFC17D"/><stop offset="1" stop-color="#F59A51"/></linearGradient>
+        <linearGradient id="t-shirt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#87965A"/><stop offset="1" stop-color="#596C3D"/></linearGradient>
+        <linearGradient id="t-pack"  x1="0" y1="0" x2="1" y2="1"><stop stop-color="#294765"/><stop offset="1" stop-color="#142B45"/></linearGradient>
+      </defs>
+
       <!-- The city he left (left) and the city he is walking to (right).
            app.js fills these in. The art is drawn in a 160 x 170 box, so these
            translate() values place each box with its bottom edge on the ground. -->
@@ -40,68 +46,85 @@
       <!-- The ground: a dashed line that slides left, so the man looks like he moves right -->
       <line class="ground" x1="-200" y1="262" x2="600" y2="262"/>
 
-      <!-- The man. 'bob' makes the whole body rise and fall slightly with each step -->
+      <!-- The man. Soft shadow first, then the traveller.
+           'bob' makes the whole body rise and fall with each step.
+           The drawing is in its own 1200 x 900 space, so the group below scales it down and
+           sets his feet on the ground line. Each moving part (legs, shoes, front arm) is its own
+           group, so the CSS can swing it around its joint. -->
+      <ellipse class="shadow" cx="212" cy="263" rx="50" ry="5"/>
       <g class="man">
         <g class="bob">
+          <g transform="translate(47 41) scale(0.255)">
 
-          <!-- Far-side limbs first (they sit behind the body, in darker shades) -->
-          <g class="arm arm-b">
-            <line class="sleeve" x1="200" y1="108" x2="200" y2="140"/>
-            <g class="forearm">
-              <line class="skin-limb" x1="200" y1="140" x2="200" y2="166"/>
-              <circle class="skin" cx="200" cy="168" r="5.5"/>
+            <!-- backpack, behind everything -->
+            <path d="M425 262 Q425 218 464 203 L535 190 Q570 195 583 231 L601 390 Q604 438 569 459 L467 475 Q434 464 431 427 Z" fill="url(#t-pack)" stroke="#142B45" stroke-width="5"/>
+            <path d="M446 255 Q451 224 479 218 L526 210 Q548 214 554 242 L559 275 L441 294 Z" fill="#D76D32"/>
+            <path d="M438 300 Q492 273 563 293 L574 370 Q514 395 440 376 Z" fill="#203B59"/>
+            <path d="M446 386 Q502 400 574 380 L579 422 Q576 445 552 451 L467 462 Q446 455 444 433 Z" fill="#1B344F"/>
+            <path d="M456 278 L477 283 L468 338 L449 332 Z M535 273 L555 269 L561 322 L542 328 Z" fill="#E57C3B"/>
+            <path d="M458 410 Q489 423 548 408" fill="none" stroke="#3A5672" stroke-width="5" stroke-linecap="round"/>
+            <path d="M475 205 Q493 183 519 196 L539 211" fill="none" stroke="#D8793D" stroke-width="8" stroke-linecap="round"/>
+
+            <!-- far leg: the leg swings from the hip, the shoe turns at the ankle -->
+            <g class="t-leg t-leg-far">
+            <path d="M548 548 Q526 610 489 666 L424 756 Q409 778 431 793 L466 803 Q485 802 498 781 L582 694 Q615 655 627 606 L634 563 Z" fill="#28516D" stroke="#1D405A" stroke-width="5"/>
+              <g class="t-shoe t-shoe-far">
+            <path d="M432 750 L478 776 L463 805 L420 790 Q404 779 417 760 Z" fill="#91B9C8"/>
+            <path d="M419 779 Q441 782 464 798 L453 824 L416 815 Q395 806 402 793 Z" fill="#F2A45F"/>
+            <path d="M409 803 Q432 812 451 823 L475 837 Q494 850 477 860 L409 861 Q384 856 389 837 L398 813 Z" fill="#5B392A" stroke="#3E2B24" stroke-width="5"/>
+            <path d="M390 844 Q427 855 478 844 Q488 853 476 863 L405 867 Q386 864 390 844 Z" fill="#F3E5CF"/>
+            <path d="M419 824 L445 840 M428 820 L453 836 M438 818 L462 831" stroke="#D9C4A7" stroke-width="5" stroke-linecap="round"/>
+              </g>
             </g>
-          </g>
-          <g class="leg leg-b">
-            <line class="pant" x1="200" y1="160" x2="200" y2="210"/>
-            <g class="shin">
-              <line class="pant" x1="200" y1="210" x2="200" y2="255"/>
-              <ellipse class="shoe" cx="207" cy="257" rx="13" ry="6.5"/>
+
+            <!-- near leg -->
+            <g class="t-leg t-leg-near">
+            <path d="M601 541 Q634 601 664 657 L723 756 Q737 779 716 793 L682 809 Q664 812 651 789 L579 693 Q550 654 538 611 L535 555 Z" fill="#315E7A" stroke="#1D405A" stroke-width="5"/>
+              <g class="t-shoe t-shoe-near">
+            <path d="M683 748 L725 733 L741 769 L700 793 Z" fill="#91B9C8"/>
+            <path d="M697 784 Q716 773 737 765 L755 791 L724 815 Q705 821 697 803 Z" fill="#F2A45F"/>
+            <path d="M717 803 Q737 803 758 790 L784 787 Q804 789 813 806 L826 829 Q833 847 810 855 L742 867 Q719 868 710 850 L706 829 Z" fill="#6B422F" stroke="#3E2B24" stroke-width="5"/>
+            <path d="M712 845 Q755 851 815 829 Q832 842 815 856 L746 871 Q721 872 712 857 Z" fill="#F3E5CF"/>
+            <path d="M752 812 L774 831 M766 808 L787 827 M780 806 L799 821" stroke="#E4D0B4" stroke-width="5" stroke-linecap="round"/>
+              </g>
             </g>
-          </g>
 
-          <!-- Backpack, then the tunic -->
-          <rect class="pack" x="171" y="110" width="26" height="42" rx="10"/>
-          <path class="tunic" d="M187 106 Q200 99 213 106 L217 170 Q200 176 183 170 Z"/>
-          <line class="strap" x1="197" y1="107" x2="194" y2="146"/>
+            <!-- torso, shirt, far arm holding the backpack strap -->
+            <path d="M536 239 Q567 218 601 234 L650 263 Q671 284 664 322 L643 405 L651 516 Q618 543 560 531 L526 516 L516 410 L501 314 Q500 270 536 239 Z" fill="url(#t-shirt)" stroke="#4D6037" stroke-width="5"/>
+            <path d="M563 246 L610 250 L620 506 Q593 516 570 505 L558 321 Z" fill="#F7F1E5"/>
+            <path d="M535 314 Q559 333 559 361 L549 414 M625 333 L644 378 L629 405 M552 470 L579 488" fill="none" stroke="#4E6239" stroke-width="8" stroke-linecap="round" opacity=".75"/>
+            <path d="M532 273 Q506 279 492 311 L479 356 Q472 379 492 390 Q511 397 524 376 L549 330 Z" fill="url(#t-skin)"/>
+            <path d="M481 355 Q474 375 491 388 Q506 395 518 378 L528 360 L505 344 Z" fill="#F6A15C"/>
 
-          <!-- Scarf: a ring round the neck and a tail that flutters behind -->
-          <g class="scarf-tail">
-            <path class="scarf-line" d="M192 106 Q176 106 160 120"/>
-          </g>
-          <path class="scarf-line" d="M188 104 Q200 111 212 104"/>
-
-          <!-- Head: face, then straw hat on top -->
-          <circle class="skin" cx="200" cy="82" r="17"/>
-          <circle class="eye" cx="208" cy="81" r="2.4"/>
-          <path class="smile" d="M205 89 Q210 94 215 88"/>
-          <g transform="translate(0 -7)">
-          <path class="hat" d="M183 77 Q200 48 217 77 Z"/>
-          <path class="hat-band" d="M184 74 Q200 80 216 74"/>
-          <ellipse class="hat" cx="200" cy="77" rx="28" ry="5.5"/>
-          </g>
-
-          <!-- Near-side limbs -->
-          <g class="leg leg-a">
-            <line class="pant" x1="200" y1="160" x2="200" y2="210"/>
-            <g class="shin">
-              <line class="pant" x1="200" y1="210" x2="200" y2="255"/>
-              <ellipse class="shoe" cx="207" cy="257" rx="13" ry="6.5"/>
+            <!-- near arm, swinging, with the watch -->
+            <g class="t-arm">
+            <path d="M630 292 Q652 300 663 322 L686 370 Q699 393 714 413 L741 444 Q752 459 740 472 Q728 484 713 469 L674 438 Q656 423 642 401 L612 354 Q599 329 610 309 Z" fill="url(#t-skin)"/>
+            <path d="M690 413 Q707 429 723 446 L742 447 Q753 457 740 472 Q728 484 713 469 L682 443 Z" fill="#F6A15C"/>
+            <path d="M672 402 L691 390 L706 410 L688 424 Z" fill="#17283A"/>
+            <rect x="678" y="397" width="18" height="15" rx="4" transform="rotate(-32 687 404)" fill="#263C51"/>
             </g>
-          </g>
-          <g class="arm arm-a">
-            <line class="sleeve" x1="200" y1="108" x2="200" y2="140"/>
-            <g class="forearm">
-              <line class="skin-limb" x1="200" y1="140" x2="200" y2="166"/>
-              <circle class="skin" cx="200" cy="168" r="5.5"/>
-              <!-- olive sprig held in the hand -->
-              <path class="sprig" d="M200 166 Q204 156 202 144"/>
-              <ellipse class="leaf" cx="197" cy="154" rx="3" ry="6" transform="rotate(-35 197 154)"/>
-              <ellipse class="leaf" cx="206" cy="150" rx="3" ry="6" transform="rotate(35 206 150)"/>
-              <ellipse class="leaf" cx="201" cy="141" rx="3" ry="6"/>
-            </g>
-          </g>
 
+            <!-- shoulder strap and the hand gripping it -->
+            <path d="M531 238 Q558 223 581 243 L607 284 L588 302 L560 263 Q550 255 539 266 Z" fill="#1B344F" stroke="#10263D" stroke-width="4"/>
+            <path d="M566 250 L582 244 L610 286 L594 298 Z" fill="#D97837"/>
+            <path d="M558 288 Q571 280 581 291 L596 310 Q603 319 594 327 L581 337 Q571 342 565 333 L551 315 Q546 301 558 288 Z" fill="url(#t-skin)"/>
+            <path d="M571 300 L584 313 M566 308 L579 321" fill="none" stroke="#E88748" stroke-width="4" stroke-linecap="round"/>
+
+            <!-- neck, head, ear, hair, face, collar -->
+            <path d="M573 190 L577 235 Q591 254 613 241 L618 210 Z" fill="url(#t-skin)"/>
+            <path d="M548 123 Q548 83 584 69 Q621 56 650 79 Q675 99 671 133 L666 166 Q659 194 633 207 Q606 220 582 201 L562 181 Q548 164 548 123 Z" fill="url(#t-skin)" stroke="#E88748" stroke-width="3"/>
+            <ellipse cx="558" cy="151" rx="17" ry="22" fill="#F6A15C"/>
+            <path d="M553 148 Q563 141 564 153 Q560 162 554 157" fill="none" stroke="#D8793D" stroke-width="3"/>
+            <path d="M543 151 Q524 128 536 98 Q543 76 568 65 Q585 45 614 55 Q634 36 652 52 Q672 59 672 79 Q697 77 699 96 Q695 116 673 120 L661 101 Q641 119 612 112 Q590 130 574 130 L568 166 Q555 168 543 151 Z" fill="#302322"/>
+            <path d="M548 103 Q570 76 592 79 Q613 79 627 62 M612 83 Q638 73 652 59 M649 99 Q668 95 679 84" fill="none" stroke="#49302A" stroke-width="6" stroke-linecap="round"/>
+            <path d="M632 129 Q644 124 652 129" fill="none" stroke="#382521" stroke-width="5" stroke-linecap="round"/>
+            <ellipse cx="644" cy="143" rx="4" ry="7" fill="#2A211E"/>
+            <path d="M661 158 Q671 162 680 157" fill="none" stroke="#C96E42" stroke-width="4" stroke-linecap="round"/>
+            <path d="M627 183 Q644 192 661 180" fill="none" stroke="#D8794D" stroke-width="3" stroke-linecap="round"/>
+            <path d="M565 237 L584 254 L570 274 L552 249 Z" fill="#6B7D49"/>
+            <path d="M605 240 L620 251 L613 274 L594 252 Z" fill="#657744"/>
+
+          </g>
         </g>
       </g>
     </svg>

@@ -40,45 +40,7 @@ button {
   cursor: pointer;
 }
 
-/* ---------- Colours and shapes (flat style, no outlines) ----------
-   Each body part has a class, so changing a colour is a one-line edit. */
-
-#scene .pant,
-#scene .sleeve,
-#scene .skin-limb,
-#scene .strap,
-#scene .sprig,
-#scene .scarf-line,
-#scene .smile,
-#scene .hat-band {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-#scene .pant       { stroke: #34586b; stroke-width: 13; }
-#scene .sleeve     { stroke: #e8703a; stroke-width: 12; }
-#scene .skin-limb  { stroke: #f0b98d; stroke-width: 9; }
-#scene .skin       { fill: #f0b98d; }
-#scene .shoe       { fill: #2b2f36; }
-#scene .tunic      { fill: #e8703a; }
-#scene .pack       { fill: #7a5230; }
-#scene .strap      { stroke: #5a3a1e; stroke-width: 3.5; }
-#scene .scarf-line { stroke: #4aa3c7; stroke-width: 7; }
-#scene .eye        { fill: #2b2f36; }
-#scene .smile      { stroke: #2b2f36; stroke-width: 2.2; }
-#scene .hat        { fill: #e9c46a; }
-#scene .hat-band   { stroke: #c0392b; stroke-width: 4; }
-#scene .sprig      { stroke: #5c7a3a; stroke-width: 2.5; }
-#scene .leaf       { fill: #7fa650; }
-
-/* limbs on the far side of the body are a shade darker, so you can tell them apart */
-#scene .leg-b .pant      { stroke: #243f4e; }
-#scene .leg-b .shoe      { fill: #14171c; }
-#scene .arm-b .sleeve    { stroke: #b8552a; }
-#scene .arm-b .skin-limb { stroke: #d49a72; }
-#scene .arm-b .skin      { fill: #d49a72; }
-
+/* ---------- Ground and shadow ---------- */
 #scene .ground {
   stroke: #9a8f7a;
   stroke-width: 4;
@@ -86,6 +48,14 @@ button {
   stroke-dasharray: 40 54;          /* 40 dash + 54 gap = 94 per pattern repeat */
   animation: ground-slide 0.6s linear infinite;
 }
+
+#scene .shadow { fill: rgba(60, 50, 40, 0.14); }
+
+@keyframes ground-slide {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: 94; }
+}
+
 
 /* ---------- Cities ----------
    The scale is set by app.js on every frame. Scaling from the bottom-centre of the
@@ -130,90 +100,82 @@ button {
 .hud-small { font-size: 12px; opacity: 0.8; }
 
 /* ---------- Resting (meals and sleep) ----------
-   While he is not walking, we switch the walking animations off.
-   Every limb then falls back to its plain drawn position: a man standing still. */
-.resting .leg, .resting .shin, .resting .arm, .resting .forearm,
-.resting .bob, .resting .scarf-tail {
+   While he is not walking, the walking animations are switched off and every part is set to
+   a standing pose: legs straight down, arm hanging. (Angles are relative to the pose it was drawn in.) */
+.resting .t-leg, .resting .t-shoe, .resting .t-arm, .resting .bob {
   animation: none;
 }
+.resting .t-leg-far   { transform: rotate(-33deg); }
+.resting .t-leg-near  { transform: rotate(28deg); }
+.resting .t-shoe-far  { transform: rotate(26deg); }
+.resting .t-shoe-near { transform: rotate(-22deg); }
+.resting .t-arm       { transform: rotate(34deg); }
+.resting .bob         { transform: translateY(-12px); }
 .resting #scene .ground {
   animation: none;
 }
 
 /* ---------- Walking animation ----------
    One full walk cycle takes 1.2 seconds (two steps).
-   Every moving part rotates around its joint, so we tell CSS where that joint is.
-   The numbers are positions inside the SVG's 400 x 300 drawing space. */
 
-.leg, .shin, .arm, .forearm {
+   The traveller was drawn in one pose: far leg back, near leg forward, near arm forward.
+   Each moving part is its own group. We rotate it around its joint, and the numbers below are
+   positions inside the drawing's own 1200 x 900 space (hip, ankle, shoulder).
+   A rotation of 0 means "exactly as drawn". A negative angle swings forward, a positive one back. */
+
+.t-leg, .t-shoe, .t-arm {
   transform-box: view-box;
   animation-duration: 1.2s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 
-/* Thigh pivots at the hip, shin at the knee, arm at the shoulder, forearm at the elbow */
-.leg     { transform-origin: 200px 160px; animation-name: thigh-swing; }
-.shin    { transform-origin: 200px 210px; animation-name: knee-bend; }
-.arm     { transform-origin: 200px 108px; animation-name: arm-swing; }
-.forearm { transform-origin: 200px 140px; animation-name: elbow-bend; }
+/* Hips, ankles and shoulder */
+.t-leg-far   { transform-origin: 591px 555px; animation-name: far-leg; }
+.t-leg-near  { transform-origin: 568px 548px; animation-name: near-leg; }
+.t-shoe-far  { transform-origin: 445px 775px; animation-name: far-shoe; }
+.t-shoe-near { transform-origin: 705px 785px; animation-name: near-shoe; }
+.t-arm       { transform-origin: 620px 300px; animation-name: arm-swing; }
 
-/* The second leg/arm runs the same motion, but half a cycle later (0.6s) */
-.leg-b, .leg-b .shin,
-.arm-b, .arm-b .forearm {
-  animation-delay: -0.6s;
+/* The far leg starts back (as drawn) and swings forward, then returns */
+@keyframes far-leg {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(-61deg); }
 }
 
-/* Facing right: a negative angle swings forward, a positive angle swings back */
-@keyframes thigh-swing {
-  0%, 100% { transform: rotate(28deg); }    /* leg back  */
-  50%      { transform: rotate(-28deg); }   /* leg front */
+/* The near leg starts forward (as drawn) and swings back, then returns */
+@keyframes near-leg {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(61deg); }
 }
 
-@keyframes knee-bend {
-  0%, 100% { transform: rotate(15deg); }
-  20%      { transform: rotate(60deg); }    /* knee folds while the leg swings through */
-  50%      { transform: rotate(5deg); }
-  75%      { transform: rotate(2deg); }
+/* Shoes turn the opposite way to their leg so the feet stay roughly level with the ground */
+@keyframes far-shoe {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(45deg); }
 }
 
-/* Arm swings the opposite way to the leg on the same side */
+@keyframes near-shoe {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(-45deg); }
+}
+
+/* The near arm swings against the near leg: back while that leg is forward */
 @keyframes arm-swing {
-  0%, 100% { transform: rotate(-25deg); }
-  50%      { transform: rotate(25deg); }
+  0%, 100% { transform: rotate(44deg); }
+  50%      { transform: rotate(0deg); }
 }
 
-@keyframes elbow-bend {
-  0%, 100% { transform: rotate(-35deg); }
-  50%      { transform: rotate(-10deg); }
-}
-
-/* The body rises a little between steps and dips at each footfall */
+/* The body is lowest when the legs are spread (each footfall) and highest when they pass each other */
 .bob {
   animation: bob 0.6s ease-in-out infinite;
 }
 
 @keyframes bob {
   0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-5px); }
+  50%      { transform: translateY(-11px); }   /* straight legs reach lower than striding ones, so the body rises to keep the feet on the ground */
 }
 
-/* The scarf tail flutters in the air behind him */
-.scarf-tail {
-  transform-box: view-box;
-  transform-origin: 192px 106px;
-  animation: flutter 0.6s ease-in-out infinite alternate;
-}
-
-@keyframes flutter {
-  from { transform: rotate(-7deg); }
-  to   { transform: rotate(9deg); }
-}
-
-@keyframes ground-slide {
-  from { stroke-dashoffset: 0; }
-  to   { stroke-dashoffset: 94; }
-}
 
 /* ---------- Start screen and controls ---------- */
 .controls {
@@ -275,3 +237,4 @@ body:not(.started) * {
 .paused *::after {
   animation-play-state: paused !important;
 }
+
