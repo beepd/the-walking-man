@@ -834,6 +834,102 @@ const ROME_ART = `
   <rect x="0" y="166" width="160" height="4" fill="#a8905f"/>
 `;
 
+
+// ---------- Batch 7 of the pictures ----------
+// Athens: the Parthenon on the Acropolis
+let parthenonCols = '';
+for (let i = 0; i < 8; i++) parthenonCols += `<rect x="${24 + i * 14}" y="82" width="8" height="54"/>`;
+const ATHENS_ART = `
+  <path d="M0 166 V150 Q20 128 50 126 H110 Q140 128 160 150 V166Z" fill="#b8a27a"/>
+  <g fill="#ece3cd">
+    <path d="M16 82 L80 52 L144 82Z"/>
+    <rect x="16" y="82" width="128" height="8"/>
+    <g>${parthenonCols}</g>
+    <rect x="16" y="134" width="128" height="6"/>
+    <rect x="10" y="140" width="140" height="6"/>
+  </g>
+  <g fill="#d4c8aa"><path d="M30 80 L80 58 L130 80Z"/><rect x="16" y="88" width="128" height="3"/></g>
+  <g fill="#ece3cd" opacity="0.0"><rect x="0" y="0" width="1" height="1"/></g>
+  <g fill="#7fa650"><circle cx="8" cy="156" r="9"/><circle cx="152" cy="158" r="8"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#9e8a62"/>
+`;
+
+// Istanbul: Hagia Sophia, a great dome with four minarets
+const ISTANBUL_ART = `
+  <g fill="#d9c39a">
+    <rect x="36" y="100" width="88" height="66"/>
+    <path d="M36 100 a14 14 0 0 1 14 -14 V100Z"/><path d="M124 100 a14 14 0 0 0 -14 -14 V100Z"/>
+    <path d="M42 126 a18 18 0 0 1 18 -18 V126Z" opacity="0.0"/>
+  </g>
+  <path d="M50 100 a30 30 0 0 1 60 0Z" fill="#c9ae80"/>
+  <path d="M56 100 a24 24 0 0 1 48 0Z" fill="#8f9fa8"/>
+  <path d="M60 100 Q80 36 100 100Z" fill="#8f9fa8" opacity="0.0"/>
+  <path d="M60 86 Q80 40 100 86Z" fill="#9aa9b2"/>
+  <rect x="79" y="36" width="2" height="22" fill="#c9ae80"/>
+  <g fill="#e8e0cf">
+    <rect x="12" y="70" width="9" height="96"/><rect x="139" y="70" width="9" height="96"/>
+    <rect x="26" y="88" width="7" height="78"/><rect x="127" y="88" width="7" height="78"/>
+  </g>
+  <g fill="#8f9fa8">
+    <path d="M11 70 L16.5 46 L22 70Z"/><path d="M138 70 L143.5 46 L149 70Z"/>
+    <path d="M25 88 L29.5 68 L34 88Z"/><path d="M126 88 L130.5 68 L135 88Z"/>
+  </g>
+  <g fill="#b9a67e"><rect x="10" y="78" width="13" height="3"/><rect x="137" y="78" width="13" height="3"/></g>
+  <g fill="#5a4a38">
+    <path d="M70 166 V138 a10 10 0 0 1 20 0 V166Z"/>
+    <path d="M44 166 V132 a6 6 0 0 1 12 0 V166Z"/><path d="M104 166 V132 a6 6 0 0 1 12 0 V166Z"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#a99a78"/>
+`;
+
+// Tbilisi: Narikala fortress on its hill, with old houses and balconies below
+const TBILISI_ART = `
+  <path d="M0 150 Q10 86 60 66 Q110 56 160 96 V150Z" fill="#8b9b6a"/>
+  <g fill="#b8a98a">
+    <rect x="36" y="64" width="64" height="20"/>
+    <rect x="30" y="48" width="14" height="30"/><rect x="92" y="44" width="14" height="34"/>
+  </g>
+  <g fill="#a49573">
+    ${merlons(36, 100, 58, 6, 5, 6)}
+    <path d="M30 48 L37 36 L44 48Z"/><path d="M92 44 L99 30 L106 44Z"/>
+  </g>
+  <g fill="#8a4a3a"><path d="M30 48 L37 38 L44 48Z"/><path d="M92 44 L99 32 L106 44Z"/></g>
+  <g fill="#e8d6b0">
+    <rect x="6"   y="122" width="28" height="44"/><rect x="36"  y="130" width="26" height="36"/>
+    <rect x="64"  y="120" width="30" height="46"/><rect x="96"  y="128" width="26" height="38"/>
+    <rect x="124" y="124" width="30" height="42"/>
+  </g>
+  <g fill="#8a5a32">
+    <rect x="4"  y="136" width="32" height="5"/><rect x="62" y="134" width="34" height="5"/><rect x="122" y="138" width="34" height="5"/>
+    <rect x="34" y="144" width="30" height="4"/><rect x="94" y="144" width="30" height="4"/>
+  </g>
+  <g fill="#b5443a">
+    <path d="M4 122 L20 110 L36 122Z"/><path d="M34 130 L49 120 L64 130Z"/><path d="M62 120 L79 108 L96 120Z"/>
+    <path d="M94 128 L109 118 L124 128Z"/><path d="M122 124 L139 112 L156 124Z"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#8e8a78"/>
+`;
+
+// Dubai: the Burj Khalifa, a tall stepped needle among glass towers
+const DUBAI_ART = `
+  <g fill="#b8cad6">
+    <rect x="4"  y="96" width="22" height="70"/><rect x="28" y="116" width="18" height="50"/>
+    <rect x="114" y="104" width="20" height="62"/><rect x="136" y="122" width="20" height="44"/>
+  </g>
+  <g fill="#9fb4c3"><rect x="10" y="104" width="4" height="56"/><rect x="120" y="112" width="4" height="48"/></g>
+  <g fill="#cfdde7">
+    <path d="M72 166 V108 H88 V166Z"/>
+    <path d="M70 110 L72 86 H88 L90 110Z"/>
+    <path d="M72 88 L74 66 H86 L88 88Z"/>
+    <path d="M74 68 L76 48 H84 L86 68Z"/>
+    <path d="M76 50 L78 32 H82 L84 50Z"/>
+    <path d="M79 34 L80 4 L81 34Z"/>
+  </g>
+  <g fill="#9fb4c3"><path d="M80 4 L81 34 H80Z"/><path d="M80 110 H88 V166 H80Z"/><path d="M80 88 H88 V110 H80Z"/></g>
+  <g fill="#7f98ab"><rect x="52" y="140" width="14" height="26"/><rect x="94" y="136" width="14" height="30"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#c9b48a"/>
+`;
+
 // ---------- The whole route ----------
 // lon      : longitude in degrees (east is positive). Sets his local solar time: every 15 degrees is one hour.
 // kmToNext : worked out below from the coordinates (walking road is about 20% longer than a straight line).
@@ -873,10 +969,10 @@ const CITIES = [
   { id: 'berlin',      name: 'Berlin',       country: 'Germany',      lat: 52.520, lon: 13.405, art: BERLIN_ART,   dish: { name: 'currywurst', art: dishPlate('#c0392b', '#d9a05b') } },
   { id: 'vienna',      name: 'Vienna',       country: 'Austria',      lat: 48.208, lon: 16.373, art: VIENNA_ART,   dish: { name: 'schnitzel',  art: dishPlate('#e0b055', '#f2e04a') } },
   { id: 'rome',        name: 'Rome',         country: 'Italy',        lat: 41.903, lon: 12.496, art: ROME_ART,   dish: { name: 'carbonara',  art: dishPlate('#f0dba0', '#6b4a2b') } },
-  { id: 'athens',      name: 'Athens',       country: 'Greece',       lat: 37.984, lon: 23.728,   dish: { name: 'gyros',      art: dishRoll('#efd9a0', '#c0392b') } },
-  { id: 'istanbul',    name: 'Istanbul',     country: 'Turkey',       lat: 41.008, lon: 28.978,   dish: { name: 'simit',      art: dishPlate('#d98c2b', '#efd48a') } },
-  { id: 'tbilisi',     name: 'Tbilisi',      country: 'Georgia',      lat: 41.715, lon: 44.827,   dish: { name: 'khachapuri', art: dishPlate('#efc873', '#f2e04a') } },
-  { id: 'dubai',       name: 'Dubai',        country: 'UAE',          lat: 25.205, lon: 55.271,   mode: 'row', dish: { name: 'shawarma', art: dishRoll('#e8c27a', '#c0392b') } },
+  { id: 'athens',      name: 'Athens',       country: 'Greece',       lat: 37.984, lon: 23.728, art: ATHENS_ART,   dish: { name: 'gyros',      art: dishRoll('#efd9a0', '#c0392b') } },
+  { id: 'istanbul',    name: 'Istanbul',     country: 'Turkey',       lat: 41.008, lon: 28.978, art: ISTANBUL_ART,   dish: { name: 'simit',      art: dishPlate('#d98c2b', '#efd48a') } },
+  { id: 'tbilisi',     name: 'Tbilisi',      country: 'Georgia',      lat: 41.715, lon: 44.827, art: TBILISI_ART,   dish: { name: 'khachapuri', art: dishPlate('#efc873', '#f2e04a') } },
+  { id: 'dubai',       name: 'Dubai',        country: 'UAE',          lat: 25.205, lon: 55.271, art: DUBAI_ART,   mode: 'row', dish: { name: 'shawarma', art: dishRoll('#e8c27a', '#c0392b') } },
 ];
 
 // Give every city its stand-in picture if it has none yet, and work out the distance to the next city.
