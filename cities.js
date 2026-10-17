@@ -975,6 +975,197 @@ const CITIES = [
   { id: 'dubai',       name: 'Dubai',        country: 'UAE',          lat: 25.205, lon: 55.271, art: DUBAI_ART,   mode: 'row', dish: { name: 'shawarma', art: dishRoll('#e8c27a', '#c0392b') } },
 ];
 
+
+// ---------- The dish pictures ----------
+// Each is drawn around the point (0, 0), about 40 wide. They are matched to the cities by dish name.
+const plateBase = `<ellipse cx="0" cy="9" rx="20" ry="6.5" fill="#f4efe4"/><ellipse cx="0" cy="8" rx="16" ry="4.5" fill="#e6dfd0"/>`;
+const DISH_ART = {
+  'biryani': `${plateBase}
+    <path d="M-15 8 Q-12 -10 0 -12 Q12 -10 15 8Z" fill="#e8b84a"/>
+    <path d="M-9 4 Q-6 -6 0 -8 Q6 -6 9 4Z" fill="#f2d070" opacity="0.8"/>
+    <g fill="#7a4a22"><rect x="-8" y="-2" width="6" height="5" rx="1.5"/><rect x="3" y="-4" width="6" height="5" rx="1.5"/></g>
+    <g fill="#f4efe4"><ellipse cx="-1" cy="-9" rx="4.5" ry="3"/></g><circle cx="-1" cy="-9" r="1.6" fill="#f2b630"/>
+    <path d="M9 -2 q4 -3 7 0 q-3 3 -7 0Z" fill="#4f8a3a"/>`,
+  'kathi roll': `<rect x="-18" y="-7" width="34" height="14" rx="7" fill="#e8c27a" transform="rotate(-10)"/>
+    <g stroke="#c99a4a" stroke-width="1.5" transform="rotate(-10)"><path d="M-10 -7 V7 M-2 -7 V7 M6 -7 V7"/></g>
+    <g transform="rotate(-10)"><ellipse cx="16" cy="0" rx="3.5" ry="7" fill="#d9a65a"/><circle cx="16" cy="-2" r="2" fill="#8b3a8a"/><circle cx="16" cy="2" r="2" fill="#4f8a3a"/></g>
+    <path d="M-16 5 L6 1 L8 12 L-14 15Z" fill="#cfd5d9"/><path d="M-16 5 L6 1" stroke="#aeb6bb" stroke-width="1"/>`,
+  'hilsa curry': `<path d="M-18 -2 H18 Q16 15 0 15 Q-16 15 -18 -2Z" fill="#f1e7d6"/>
+    <ellipse cx="0" cy="-2" rx="18" ry="6" fill="#d8742c"/>
+    <path d="M-10 -3 Q0 -9 10 -3 Q0 1 -10 -3Z" fill="#c9ccd0"/><path d="M10 -3 L15 -7 V1Z" fill="#b5b9be"/><circle cx="-6" cy="-3.5" r="1" fill="#2b2b2b"/>
+    <path d="M-12 1 q4 -1 7 2" stroke="#4f8a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+  'mohinga': `<path d="M-18 -2 H18 Q16 15 0 15 Q-16 15 -18 -2Z" fill="#f1e7d6"/>
+    <ellipse cx="0" cy="-2" rx="18" ry="6" fill="#d9a85a"/>
+    <g stroke="#f5e6b8" stroke-width="1.4" fill="none"><path d="M-12 -2 q5 -4 10 0 q5 4 10 0 M-9 0 q5 -4 10 0 q5 4 9 0"/></g>
+    <ellipse cx="9" cy="-5" rx="5" ry="3" fill="#f4efe4"/><circle cx="9" cy="-5" r="1.7" fill="#f2b630"/>
+    <path d="M-14 -5 l5 -4 l4 5Z" fill="#c9843a"/><path d="M-4 -8 a6 6 0 0 1 6 5 Z" fill="#a8cf4a"/>`,
+  'pad thai': `${plateBase}
+    <path d="M-14 7 Q-15 -6 -2 -8 Q14 -8 14 5 Q8 9 -2 9Z" fill="#e8a23a"/>
+    <g stroke="#f2c36a" stroke-width="1.6" fill="none"><path d="M-10 2 q4 -6 8 0 q4 6 8 0 M-8 -2 q4 -5 8 0 q4 5 8 0"/></g>
+    <g fill="#7a4a22"><circle cx="-6" cy="-1" r="1.2"/><circle cx="3" cy="1" r="1.2"/><circle cx="7" cy="-3" r="1.2"/></g>
+    <path d="M6 -6 q6 -3 9 2 q-3 4 -7 2Z" fill="#f08a7a"/>
+    <path d="M10 5 a6 6 0 0 1 7 4 Z" fill="#a8cf4a"/>`,
+  'fish amok': `<path d="M-16 -4 H16 L13 13 H-13Z" fill="#6f9a4a"/><path d="M-16 -4 H16" stroke="#58803a" stroke-width="2"/>
+    <ellipse cx="0" cy="-4" rx="16" ry="4.5" fill="#e9b44c"/>
+    <g fill="#c0392b"><circle cx="-6" cy="-5" r="1.6"/><circle cx="4" cy="-4" r="1.6"/><circle cx="9" cy="-6" r="1.3"/></g>
+    <path d="M-4 -7 q3 -3 6 0" stroke="#f4efe4" stroke-width="1.6" fill="none"/>`,
+  'pho': `<path d="M-19 -3 H19 Q17 16 0 16 Q-17 16 -19 -3Z" fill="#f4efe4"/>
+    <path d="M-19 -3 H19" stroke="#d7cfbe" stroke-width="2"/>
+    <ellipse cx="0" cy="-3" rx="19" ry="5.5" fill="#d3a76a"/>
+    <path d="M-12 -3 q6 -4 12 0 q6 4 12 0" stroke="#f5e6c0" stroke-width="1.5" fill="none"/>
+    <g fill="#d9776a"><ellipse cx="-6" cy="-5" rx="5" ry="2.4"/><ellipse cx="5" cy="-4" rx="5" ry="2.4"/></g>
+    <g fill="#4f8a3a"><circle cx="-1" cy="-6" r="2"/><circle cx="10" cy="-6" r="1.6"/></g>
+    <path d="M6 -8 L18 -20 M9 -8 L21 -18" stroke="#8a5a2b" stroke-width="1.6"/>`,
+  'dumplings': `<ellipse cx="0" cy="10" rx="20" ry="6" fill="#c9a26a"/>
+    <path d="M-20 10 V3 Q0 -3 20 3 V10Z" fill="#d9b67c"/><path d="M-20 3 Q0 9 20 3" stroke="#b78e55" stroke-width="1.6" fill="none"/>
+    <g fill="#f8f4ea" stroke="#d9d0bc" stroke-width="1">
+      <path d="M-14 0 Q-8 -14 0 0Z"/><path d="M-4 -2 Q4 -16 12 -2Z"/><path d="M6 0 Q12 -12 18 0Z"/>
+    </g>
+    <g stroke="#cfc6b0" stroke-width="1"><path d="M-12 -4 l1 -2 M-10 -6 l1 -2 M-2 -6 l1 -2 M0 -8 l1 -2"/></g>`,
+  'bibimbap': `<path d="M-18 -2 H18 Q16 14 0 14 Q-16 14 -18 -2Z" fill="#3a3330"/>
+    <ellipse cx="0" cy="-2" rx="18" ry="6" fill="#f4efe4"/>
+    <path d="M-17 -3 Q-10 -9 -3 -6 L-3 0 Q-10 3 -17 -1Z" fill="#4f8a3a"/>
+    <path d="M17 -3 Q10 -9 3 -6 L3 0 Q10 3 17 -1Z" fill="#e8892a"/>
+    <path d="M-10 3 Q0 7 10 3 L8 0 Q0 3 -8 0Z" fill="#7a4a22"/>
+    <ellipse cx="0" cy="-4" rx="5" ry="3.3" fill="#fbf7ee"/><circle cx="0" cy="-4" r="2.2" fill="#f2b630"/>
+    <circle cx="0" cy="1" r="1.6" fill="#c0392b"/>`,
+  'sushi': `<rect x="-20" y="8" width="40" height="5" rx="2" fill="#a8763a"/>
+    <g><ellipse cx="-10" cy="5" rx="8" ry="4" fill="#f8f4ea"/><path d="M-18 4 Q-10 -6 -2 4 Q-10 6 -18 4Z" fill="#f08a5a"/></g>
+    <g><ellipse cx="6" cy="5" rx="8" ry="4" fill="#f8f4ea"/><path d="M-2 4 Q6 -6 14 4 Q6 6 -2 4Z" fill="#f4a09a"/></g>
+    <g><circle cx="17" cy="-3" r="6.5" fill="#2b3a2f"/><circle cx="17" cy="-3" r="4.5" fill="#f8f4ea"/><circle cx="17" cy="-3" r="1.8" fill="#e8795a"/></g>
+    <circle cx="-4" cy="-6" r="0" fill="#000"/>`,
+  'salmon': `${plateBase}
+    <path d="M-15 6 Q-14 -8 2 -8 Q16 -8 15 6 Q0 10 -15 6Z" fill="#f08a6a"/>
+    <path d="M-12 2 Q0 -4 12 2" stroke="#f7b8a0" stroke-width="1.6" fill="none"/><path d="M-12 -2 Q0 -8 12 -2" stroke="#f7b8a0" stroke-width="1.6" fill="none"/>
+    <g stroke="#c4543a" stroke-width="1.4"><path d="M-8 -6 L-4 5 M2 -7 L6 5"/></g>
+    <path d="M10 4 a6 6 0 0 1 7 4 Z" fill="#f2d84a"/><circle cx="-14" cy="6" r="2.4" fill="#4f8a3a"/>`,
+  'fish tacos': `${plateBase}
+    <path d="M-17 7 Q-13 -12 -2 -8 Q0 3 -2 7Z" fill="#e8c27a"/><path d="M1 7 Q3 -12 14 -8 Q18 3 15 7Z" fill="#e8c27a"/>
+    <path d="M-15 0 q4 -6 9 -3 q-3 5 -9 3Z" fill="#7fb04a"/><path d="M3 -1 q6 -6 10 -3 q-3 5 -10 3Z" fill="#7fb04a"/>
+    <g fill="#f4efe4"><rect x="-11" y="-2" width="5" height="4" rx="1"/><rect x="6" y="-3" width="5" height="4" rx="1"/></g>
+    <circle cx="-3" cy="-4" r="1.5" fill="#d9472b"/><circle cx="10" cy="-5" r="1.5" fill="#d9472b"/>
+    <path d="M-6 9 a5 5 0 0 1 6 3 Z" fill="#a8cf4a"/>`,
+  'tacos al pastor': `${plateBase}
+    <path d="M-16 8 Q-12 -14 0 -9 Q3 0 0 8Z" fill="#e8c27a"/>
+    <path d="M-13 3 Q-8 -8 -2 -6 L0 4Z" fill="#e0742a"/>
+    <path d="M2 8 Q4 -12 16 -8 Q19 2 16 8Z" fill="#e8c27a" opacity="0.9"/>
+    <g fill="#f2d04a"><rect x="-9" y="-4" width="4" height="4"/><rect x="7" y="-5" width="4" height="4"/></g>
+    <g fill="#4f8a3a"><circle cx="-4" cy="-6" r="1.4"/><circle cx="12" cy="-6" r="1.4"/></g>
+    <g fill="#f4efe4"><circle cx="-6" cy="1" r="1.4"/><circle cx="9" cy="1" r="1.4"/></g>`,
+  'sancocho': `<path d="M-18 -2 H18 Q16 15 0 15 Q-16 15 -18 -2Z" fill="#f1e7d6"/>
+    <ellipse cx="0" cy="-2" rx="18" ry="6" fill="#d9b45a"/>
+    <rect x="-12" y="-9" width="14" height="6" rx="3" fill="#f2c742"/><g fill="#e0a82e"><circle cx="-8" cy="-6" r="1"/><circle cx="-4" cy="-6" r="1"/></g>
+    <path d="M4 -4 q4 -9 10 -4 q1 5 -4 5Z" fill="#c9843a"/><rect x="12" y="-9" width="6" height="3" rx="1.5" fill="#f4efe4" transform="rotate(-30 15 -7)"/>
+    <g fill="#4f8a3a"><circle cx="-2" cy="-1" r="1.6"/><circle cx="-14" cy="-2" r="1.4"/></g>`,
+  'arepa': `<ellipse cx="0" cy="8" rx="19" ry="5" fill="#d9a05b"/>
+    <ellipse cx="0" cy="3" rx="19" ry="8" fill="#f2c873"/>
+    <ellipse cx="0" cy="1" rx="14" ry="5" fill="#f6d890"/>
+    <path d="M-17 4 Q0 12 17 4" stroke="#c99a4a" stroke-width="1.5" fill="none"/>
+    <path d="M-10 -2 Q0 -8 12 -2 L10 3 Q0 7 -9 3Z" fill="#f6df5a"/>
+    <path d="M-4 -10 q2 -4 0 -7 M4 -9 q2 -4 0 -7" stroke="#cfd5d9" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+  'ceviche': `<path d="M-18 -4 H18 L10 8 H-10Z" fill="#e8f0f2" opacity="0.95"/><rect x="-2" y="8" width="4" height="6" fill="#d7dfe2"/><rect x="-10" y="14" width="20" height="2.5" rx="1" fill="#d7dfe2"/>
+    <g fill="#f4efe4"><rect x="-12" y="-8" width="6" height="5" rx="1.5"/><rect x="-3" y="-10" width="6" height="5" rx="1.5"/><rect x="6" y="-8" width="6" height="5" rx="1.5"/></g>
+    <g fill="#9a3a7a"><rect x="-8" y="-4" width="5" height="2" rx="1"/><rect x="2" y="-5" width="5" height="2" rx="1"/></g>
+    <g fill="#f2c742"><circle cx="-14" cy="-6" r="1.4"/><circle cx="14" cy="-6" r="1.4"/></g>
+    <path d="M11 -10 a7 7 0 0 1 8 5 Z" fill="#a8cf4a"/>`,
+  'empanada': `<path d="M-18 8 Q-18 -12 0 -12 Q18 -12 18 8Z" fill="#e0a252"/>
+    <path d="M-18 8 Q-18 -12 0 -12 Q18 -12 18 8Z" fill="none" stroke="#b97a32" stroke-width="2"/>
+    <g stroke="#b97a32" stroke-width="1.6" stroke-linecap="round"><path d="M-17 7 l2 -3 M-14 7 l2 -3 M-11 7 l2 -3 M-8 7 l2 -3 M-5 7 l2 -3 M-2 7 l2 -3 M1 7 l2 -3 M4 7 l2 -3 M7 7 l2 -3 M10 7 l2 -3 M13 7 l2 -3"/></g>
+    <path d="M-10 -4 Q-4 -9 2 -8" stroke="#f0c07a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <rect x="-18" y="9" width="36" height="2.5" rx="1" fill="#c9a26a"/>`,
+  'asado': `<ellipse cx="0" cy="10" rx="21" ry="5.5" fill="#3a3330"/>
+    <path d="M-16 8 Q-16 -9 -2 -8 Q16 -8 16 6 Q0 11 -16 8Z" fill="#8a4a2b"/>
+    <path d="M-12 4 Q-2 -2 10 3" stroke="#5a2f1a" stroke-width="2.2" fill="none"/><path d="M-10 -3 Q0 -8 10 -3" stroke="#5a2f1a" stroke-width="2.2" fill="none"/>
+    <rect x="9" y="-7" width="8" height="12" rx="3" fill="#e8d6b0" transform="rotate(20 13 -1)"/>
+    <g fill="#4f8a3a"><circle cx="-14" cy="9" r="2.4"/><circle cx="-10" cy="11" r="2"/></g>`,
+  'feijoada': `<path d="M-18 -2 H18 Q16 15 0 15 Q-16 15 -18 -2Z" fill="#3a3330"/>
+    <ellipse cx="0" cy="-2" rx="18" ry="6" fill="#2b211c"/>
+    <g fill="#8a4a2b"><rect x="-10" y="-5" width="8" height="4" rx="2"/><rect x="2" y="-4" width="8" height="4" rx="2"/></g>
+    <g fill="#4a3328"><circle cx="-4" cy="0" r="1.6"/><circle cx="5" cy="1" r="1.6"/><circle cx="-13" cy="-2" r="1.6"/></g>
+    <circle cx="14" cy="-9" r="6" fill="#f0a52a"/><circle cx="14" cy="-9" r="4" fill="none" stroke="#f8d27a" stroke-width="1"/>
+    <path d="M14 -13 V-5 M10 -9 H18" stroke="#f8d27a" stroke-width="0.8"/>`,
+  'thieboudienne': `<ellipse cx="0" cy="8" rx="21" ry="7" fill="#f4efe4"/>
+    <path d="M-17 7 Q-16 -9 0 -9 Q16 -9 17 7 Q0 12 -17 7Z" fill="#e5894a"/>
+    <path d="M-10 -1 Q-2 -7 8 -2 L10 4 Q0 7 -9 4Z" fill="#d8dce0"/><path d="M8 -2 L13 -5 V3Z" fill="#c4c9ce"/><circle cx="-6" cy="0" r="0.9" fill="#2b2b2b"/>
+    <g fill="#f08a2a"><rect x="-15" y="-2" width="5" height="3" rx="1.4" transform="rotate(-25 -12 0)"/></g>
+    <g fill="#4f8a3a"><circle cx="12" cy="-4" r="1.8"/><circle cx="-2" cy="-7" r="1.6"/></g>`,
+  'jollof rice': `<path d="M-18 -2 H18 Q16 15 0 15 Q-16 15 -18 -2Z" fill="#f1e7d6"/>
+    <path d="M-17 -2 Q-12 -14 0 -13 Q12 -14 17 -2Z" fill="#d9542c"/>
+    <g fill="#e8742c"><circle cx="-8" cy="-6" r="1.4"/><circle cx="0" cy="-9" r="1.4"/><circle cx="8" cy="-6" r="1.4"/><circle cx="3" cy="-4" r="1.4"/></g>
+    <g fill="#f2c742"><ellipse cx="-12" cy="-4" rx="4" ry="2.4"/><ellipse cx="12" cy="-4" rx="4" ry="2.4"/></g>
+    <path d="M-2 -9 q4 -8 10 -4 q0 5 -5 6Z" fill="#c9843a"/>`,
+  'couscous': `<ellipse cx="0" cy="12" rx="20" ry="5" fill="#c9672f"/>
+    <path d="M-17 12 Q-17 2 -10 0 H10 Q17 2 17 12Z" fill="#d9793a"/>
+    <path d="M-12 0 L0 -18 L12 0Z" fill="#b5532a"/><rect x="-2" y="-22" width="4" height="6" rx="2" fill="#8a3a1a"/>
+    <path d="M-14 4 H14" stroke="#e8a060" stroke-width="1.6"/>
+    <g stroke="#cfd5d9" stroke-width="1.6" fill="none" stroke-linecap="round"><path d="M-3 -25 q3 -4 0 -8 M4 -24 q3 -4 0 -7" opacity="0.0"/></g>`,
+  'pastel de nata': `${plateBase}
+    <g><path d="M-18 8 L-16 -1 H-4 L-2 8Z" fill="#e8b96a"/><ellipse cx="-10" cy="-1" rx="6" ry="2.4" fill="#f6d86a"/><circle cx="-12" cy="-1" r="1.3" fill="#a8541e"/><circle cx="-8" cy="-1.4" r="1.1" fill="#a8541e"/></g>
+    <g><path d="M2 8 L4 -1 H16 L18 8Z" fill="#e8b96a"/><ellipse cx="10" cy="-1" rx="6" ry="2.4" fill="#f6d86a"/><circle cx="8" cy="-1" r="1.3" fill="#a8541e"/><circle cx="12" cy="-1.4" r="1.1" fill="#a8541e"/></g>
+    <g stroke="#c99a4a" stroke-width="0.9"><path d="M-14 -1 V8 M-10 -1 V8 M-6 -1 V8 M6 -1 V8 M10 -1 V8 M14 -1 V8"/></g>`,
+  'churros': `<g fill="#e0a252" stroke="#b97a32" stroke-width="1">
+      <rect x="-20" y="-6" width="26" height="6" rx="3" transform="rotate(-18 -7 -3)"/>
+      <rect x="-18" y="1" width="28" height="6" rx="3" transform="rotate(-6 -4 4)"/>
+      <rect x="-16" y="8" width="26" height="6" rx="3" transform="rotate(6 -3 11)"/>
+    </g>
+    <g stroke="#f4e3c0" stroke-width="1.2"><path d="M-22 -8 l3 3 M-12 -12 l3 3 M-6 -2 l3 3 M-14 4 l3 3 M-8 12 l3 3"/></g>
+    <path d="M10 2 H22 L20 14 H12Z" fill="#f4efe4"/><ellipse cx="16" cy="2" rx="6" ry="2" fill="#5a2f1a"/>`,
+  'croissant': `<path d="M-20 6 Q-18 -12 -8 -10 Q-2 -16 6 -10 Q16 -12 20 6 Q14 2 8 8 Q0 2 -8 8 Q-14 2 -20 6Z" fill="#e0952f"/>
+    <g fill="none" stroke="#b86f1c" stroke-width="1.6" stroke-linecap="round"><path d="M-12 -8 Q-10 0 -13 6 M-4 -11 Q-2 -2 -4 6 M6 -10 Q6 -2 4 6 M14 -7 Q12 0 14 5"/></g>
+    <path d="M-14 -5 Q-4 -13 8 -9" stroke="#f2b868" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+  'fish and chips': `<path d="M-20 12 L-16 -4 L18 -4 L20 12Z" fill="#e8e4d4"/>
+    <g stroke="#a99f86" stroke-width="0.8"><path d="M-14 0 H12 M-15 4 H14 M-17 8 H16"/></g>
+    <g fill="#f0c24a"><rect x="-12" y="-14" width="4" height="12" rx="1.2" transform="rotate(-12 -10 -8)"/><rect x="-6" y="-16" width="4" height="14" rx="1.2"/><rect x="0" y="-14" width="4" height="12" rx="1.2" transform="rotate(10 2 -8)"/></g>
+    <path d="M-2 -2 Q8 -14 18 -4 Q10 4 -2 -2Z" fill="#d9942a"/><path d="M18 -4 L22 -9 V1Z" fill="#c4811f"/>
+    <path d="M-16 -6 a6 6 0 0 1 7 4 Z" fill="#f2d84a"/>`,
+  'stroopwafel': `<ellipse cx="0" cy="8" rx="19" ry="5" fill="#a8763a"/>
+    <ellipse cx="0" cy="3" rx="19" ry="8" fill="#d9a05b"/>
+    <g stroke="#a8763a" stroke-width="1.2"><path d="M-12 -3 L10 9 M-6 -5 L16 7 M-16 1 L4 11 M2 -6 L18 3 M-14 6 L-4 -5 M-6 8 L6 -6 M2 9 L14 -3 M-10 9 L-9 8"/></g>
+    <path d="M-19 3 Q0 11 19 3" stroke="#8a5a2b" stroke-width="1.5" fill="none"/>
+    <path d="M6 -8 L14 -2" stroke="#7a4a22" stroke-width="2.4" stroke-linecap="round" opacity="0.0"/>`,
+  'currywurst': `<path d="M-19 4 H19 L16 14 H-16Z" fill="#e8e4d4"/>
+    <g fill="#c4642a"><rect x="-15" y="-6" width="9" height="10" rx="4.5"/><rect x="-5" y="-8" width="9" height="12" rx="4.5"/><rect x="5" y="-6" width="9" height="10" rx="4.5"/></g>
+    <g fill="#c0392b"><path d="M-14 -4 q5 -4 9 0 q-4 4 -9 0Z"/><path d="M-4 -6 q5 -4 9 0 q-4 4 -9 0Z"/><path d="M6 -4 q5 -4 9 0 q-4 4 -9 0Z"/></g>
+    <g fill="#f2c742"><circle cx="-10" cy="-2" r="0.9"/><circle cx="0" cy="-4" r="0.9"/><circle cx="10" cy="-2" r="0.9"/><circle cx="-2" cy="1" r="0.9"/></g>
+    <path d="M12 -14 L18 -2 M15 -15 L21 -4" stroke="#8a8f94" stroke-width="1.6"/>`,
+  'schnitzel': `${plateBase}
+    <path d="M-17 6 Q-18 -9 -4 -10 Q12 -12 17 -2 Q18 8 2 10 Q-12 11 -17 6Z" fill="#e0a845"/>
+    <g fill="#f0c670"><circle cx="-8" cy="-2" r="1.6"/><circle cx="2" cy="-6" r="1.6"/><circle cx="9" cy="1" r="1.6"/><circle cx="-2" cy="4" r="1.6"/><circle cx="-12" cy="3" r="1.3"/></g>
+    <g fill="#b97a2a"><circle cx="-4" cy="-5" r="1.2"/><circle cx="6" cy="-2" r="1.2"/><circle cx="1" cy="2" r="1.2"/></g>
+    <circle cx="14" cy="6" r="5.5" fill="#f2d84a"/><circle cx="14" cy="6" r="3.8" fill="none" stroke="#f8ec8a" stroke-width="1"/>
+    <g fill="#4f8a3a"><circle cx="-17" cy="8" r="1.8"/><circle cx="-14" cy="10" r="1.5"/></g>`,
+  'carbonara': `${plateBase}
+    <path d="M-15 6 Q-16 -8 0 -9 Q16 -8 15 6 Q0 10 -15 6Z" fill="#f0dba0"/>
+    <g stroke="#d9bf78" stroke-width="1.6" fill="none"><path d="M-11 2 q5 -8 11 -2 q6 6 11 -2 M-9 -3 q5 -5 9 0 q5 5 9 -1"/></g>
+    <g fill="#9a4a3a"><rect x="-8" y="-4" width="4" height="3" rx="1"/><rect x="2" y="0" width="4" height="3" rx="1"/><rect x="6" y="-5" width="4" height="3" rx="1"/></g>
+    <g fill="#2b2b2b"><circle cx="-2" cy="-2" r="0.8"/><circle cx="5" cy="3" r="0.8"/><circle cx="-6" cy="3" r="0.8"/><circle cx="1" cy="-6" r="0.8"/></g>
+    <path d="M12 -8 L19 -18 M15 -7 L22 -17" stroke="#8a8f94" stroke-width="1.6"/>`,
+  'gyros': `<path d="M-18 8 Q-18 -12 -2 -12 Q14 -12 18 8Z" fill="#f0d9a0"/>
+    <path d="M-18 8 Q-18 -12 -2 -12 Q14 -12 18 8Z" fill="none" stroke="#c9a85a" stroke-width="1.6"/>
+    <g fill="#c4642a"><rect x="-12" y="-6" width="8" height="5" rx="2"/><rect x="0" y="-8" width="8" height="5" rx="2"/></g>
+    <g fill="#d9472b"><circle cx="-14" cy="-4" r="2.4"/><circle cx="12" cy="-3" r="2.4"/></g>
+    <path d="M-8 -12 Q-4 -18 0 -12 Q4 -18 8 -12 Q4 -8 0 -9 Q-4 -8 -8 -12Z" fill="#f8f4ea"/>
+    <g fill="#8b3a8a"><rect x="-6" y="-2" width="6" height="2" rx="1"/></g>
+    <path d="M-16 9 L-12 16 H12 L16 9Z" fill="#e8e4d4"/>`,
+  'simit': `<ellipse cx="0" cy="3" rx="19" ry="12" fill="#c9792a"/>
+    <ellipse cx="0" cy="3" rx="19" ry="12" fill="none" stroke="#a85f1c" stroke-width="1.4"/>
+    <ellipse cx="0" cy="3" rx="8" ry="4.5" fill="#f4f0e4" opacity="0.0"/>
+    <ellipse cx="0" cy="3" rx="7" ry="4" fill="#dfe6e8"/>
+    <g fill="#f6e3a8"><circle cx="-14" cy="-3" r="1"/><circle cx="-8" cy="-7" r="1"/><circle cx="0" cy="-8" r="1"/><circle cx="8" cy="-7" r="1"/><circle cx="14" cy="-3" r="1"/>
+      <circle cx="-16" cy="4" r="1"/><circle cx="16" cy="4" r="1"/><circle cx="-12" cy="10" r="1"/><circle cx="0" cy="13" r="1"/><circle cx="12" cy="10" r="1"/><circle cx="-4" cy="-4" r="0.9"/><circle cx="5" cy="-4" r="0.9"/></g>`,
+  'khachapuri': `<path d="M-21 3 Q-8 -14 0 -14 Q8 -14 21 3 Q8 16 0 16 Q-8 16 -21 3Z" fill="#d9944a"/>
+    <path d="M-21 3 Q-8 -14 0 -14 Q8 -14 21 3 Q8 16 0 16 Q-8 16 -21 3Z" fill="none" stroke="#b86f2a" stroke-width="1.4"/>
+    <ellipse cx="0" cy="3" rx="14" ry="8" fill="#f6df6a"/>
+    <ellipse cx="0" cy="3" rx="6" ry="4.4" fill="#f4efe4"/><circle cx="0" cy="3" r="3.2" fill="#f2a31a"/>
+    <rect x="7" y="0" width="5" height="4" rx="1" fill="#fbe9a0"/>`,
+  'shawarma': `<rect x="-17" y="-8" width="30" height="16" rx="8" fill="#e8c27a" transform="rotate(-24)"/>
+    <g transform="rotate(-24)"><ellipse cx="13" cy="0" rx="4" ry="8" fill="#d9a65a"/><circle cx="13" cy="-3" r="2" fill="#c4642a"/><circle cx="13" cy="2" r="2" fill="#f4efe4"/><circle cx="14" cy="-0.5" r="1.4" fill="#e87a9a"/></g>
+    <g stroke="#c99a4a" stroke-width="1.4" transform="rotate(-24)"><path d="M-8 -8 V8 M0 -8 V8"/></g>
+    <path d="M-14 6 L-2 10 L-6 18 L-18 14Z" fill="#cfd5d9"/>`,
+};
+// Use these pictures for the matching dishes
+CITIES.forEach(c => { if (DISH_ART[c.dish.name]) c.dish.art = DISH_ART[c.dish.name]; });
+
 // Give every city its stand-in picture if it has none yet, and work out the distance to the next city.
 function greatCircleKm(a, b) {
   const R = 6371, rad = Math.PI / 180;
