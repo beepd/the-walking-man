@@ -700,6 +700,140 @@ const PARIS_ART = `
   <rect x="0" y="166" width="160" height="4" fill="#9b9283"/>
 `;
 
+
+// ---------- Batch 6 of the pictures ----------
+// London: the Elizabeth Tower (Big Ben) beside Westminster
+const LONDON_ART = `
+  <g fill="#c9b98e">
+    <rect x="8" y="110" width="76" height="56"/>
+    <rect x="8" y="100" width="76" height="12"/>
+  </g>
+  <g fill="#b3a477">
+    <rect x="12" y="116" width="6" height="14"/><rect x="26" y="116" width="6" height="14"/><rect x="40" y="116" width="6" height="14"/>
+    <rect x="54" y="116" width="6" height="14"/><rect x="68" y="116" width="6" height="14"/>
+    <rect x="6" y="98" width="80" height="4"/>
+  </g>
+  <g fill="#d8c89a">
+    <rect x="100" y="50" width="26" height="116"/>
+    <rect x="97" y="44" width="32" height="8"/>
+    <rect x="102" y="26" width="22" height="20"/>
+  </g>
+  <g fill="#bfae80"><rect x="100" y="50" width="5" height="116"/><rect x="97" y="108" width="32" height="3"/></g>
+  <circle cx="113" cy="36" r="8" fill="#f4f0e4" stroke="#8a7a52" stroke-width="2"/>
+  <path d="M113 31 V36 H117" stroke="#3a3a3a" stroke-width="1.6" fill="none"/>
+  <g fill="#6f7f66"><path d="M104 26 L113 4 L122 26Z"/><rect x="112" y="0" width="2" height="6"/></g>
+  <g fill="#8a7a52"><rect x="106" y="62" width="4" height="12"/><rect x="116" y="62" width="4" height="12"/><rect x="106" y="86" width="4" height="12"/><rect x="116" y="86" width="4" height="12"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#9b8c64"/>
+`;
+
+// Amsterdam: tall narrow canal houses with stepped gables, and the canal
+const AMSTERDAM_ART = `
+  <rect x="0" y="152" width="160" height="14" fill="#8fb3c9"/>
+  <g fill="#a8553a">
+    <rect x="6" y="84" width="26" height="68"/><path d="M6 84 H12 V76 H18 V68 H24 V76 H30 V84Z"/>
+  </g>
+  <g fill="#d9c9a0">
+    <rect x="34" y="70" width="24" height="82"/><path d="M34 70 L46 52 L58 70Z"/>
+  </g>
+  <g fill="#7a8f6a">
+    <rect x="60" y="92" width="26" height="60"/><path d="M60 92 Q73 70 86 92Z"/>
+  </g>
+  <g fill="#b5443a">
+    <rect x="88" y="78" width="24" height="74"/><path d="M88 78 H94 V70 H100 V62 H106 V70 H112 V78Z"/>
+  </g>
+  <g fill="#e0cfa0">
+    <rect x="114" y="88" width="22" height="64"/><path d="M114 88 L125 72 L136 88Z"/>
+  </g>
+  <g fill="#8a6a5a">
+    <rect x="138" y="96" width="18" height="56"/><path d="M138 96 H156 V90 H150 V84 H144 V90 H138Z"/>
+  </g>
+  <g fill="#f4efe0">
+    <rect x="12" y="94" width="6" height="10"/><rect x="22" y="94" width="6" height="10"/>
+    <rect x="12" y="118" width="6" height="10"/><rect x="22" y="118" width="6" height="10"/>
+    <rect x="40" y="80" width="6" height="10"/><rect x="48" y="80" width="6" height="10"/>
+    <rect x="40" y="108" width="6" height="10"/><rect x="48" y="108" width="6" height="10"/>
+    <rect x="66" y="102" width="6" height="10"/><rect x="76" y="102" width="6" height="10"/>
+    <rect x="94" y="90" width="6" height="10"/><rect x="102" y="90" width="6" height="10"/>
+    <rect x="120" y="98" width="6" height="10"/><rect x="128" y="98" width="6" height="10"/>
+    <rect x="142" y="106" width="5" height="9"/><rect x="149" y="106" width="5" height="9"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#6a8296"/>
+`;
+
+// Berlin: the Brandenburg Gate with its chariot
+let berlinColumns = '';
+for (const x of [24, 42, 60, 92, 110, 128]) berlinColumns += `<rect x="${x}" y="82" width="9" height="84"/>`;
+const BERLIN_ART = `
+  <g fill="#dcd2b8">
+    <rect x="14" y="70" width="132" height="14"/>
+    <rect x="14" y="60" width="132" height="12"/>
+    <rect x="18" y="82" width="124" height="4"/>
+    <g>${berlinColumns}</g>
+  </g>
+  <g fill="#c2b698"><rect x="14" y="72" width="132" height="3"/><rect x="14" y="82" width="132" height="2"/></g>
+  <rect x="68" y="82" width="24" height="84" fill="#b8ad98" opacity="0.0"/>
+  <g fill="#6f8f74">
+    <rect x="62" y="40" width="36" height="10"/>
+    <path d="M70 40 Q72 24 82 24 Q90 24 92 40Z"/>
+    <path d="M62 38 L40 38 L46 28 L66 32Z" opacity="0.0"/>
+    <circle cx="80" cy="18" r="3.5"/>
+    <path d="M88 24 L100 12 L102 18 L92 28Z"/>
+    <path d="M76 24 L66 12 L64 18 L72 28Z"/>
+  </g>
+  <rect x="58" y="50" width="44" height="10" fill="#cfc4a8"/>
+  <rect x="0" y="166" width="160" height="4" fill="#a99f86"/>
+`;
+
+// Vienna: St. Stephen's Cathedral, with its tall spire and patterned roof
+let viennaRoof = '';
+for (let i = 0; i < 6; i++) {
+  const x = 12 + i * 22;
+  viennaRoof += `<path d="M${x} 124 L${x + 11} 112 L${x + 22} 124Z" fill="${i % 2 ? '#d6a62e' : '#2f8a6f'}"/>`;
+}
+const VIENNA_ART = `
+  <g fill="#b9ae96">
+    <rect x="12" y="124" width="136" height="42"/>
+    <path d="M12 124 L80 90 L148 124Z"/>
+  </g>
+  <g>${viennaRoof}</g>
+  <path d="M12 124 L80 90 L148 124Z" fill="#8a6a4a" opacity="0.0"/>
+  <g fill="#a99f86">
+    <rect x="104" y="56" width="26" height="70"/>
+    <path d="M104 56 L117 6 L130 56Z"/>
+  </g>
+  <g fill="#948a72"><rect x="104" y="56" width="5" height="70"/><path d="M117 6 L123 30 L117 56Z" opacity="0.5"/></g>
+  <g fill="#6a6252"><rect x="110" y="70" width="6" height="14"/><rect x="118" y="70" width="6" height="14"/><rect x="110" y="94" width="6" height="14"/><rect x="118" y="94" width="6" height="14"/></g>
+  <g fill="#5a4f3c">
+    <path d="M60 166 V140 a20 20 0 0 1 40 0 V166Z"/>
+    <path d="M22 166 V146 a6 6 0 0 1 12 0 V166Z"/><path d="M126 166 V146 a6 6 0 0 1 12 0 V166Z"/>
+  </g>
+  <rect x="0" y="166" width="160" height="4" fill="#948a72"/>
+`;
+
+// Rome: the Colosseum, rows of arches
+function colosseumRow(y, h, n, x0, x1) {
+  let out = '';
+  const w = (x1 - x0) / n;
+  for (let i = 0; i < n; i++) {
+    const cx = x0 + w * i + w / 2;
+    out += `<path d="M${(cx - w * 0.28).toFixed(1)} ${y + h} V${y + 4} a${(w * 0.28).toFixed(1)} 4 0 0 1 ${(w * 0.56).toFixed(1)} 0 V${y + h}Z"/>`;
+  }
+  return out;
+}
+const ROME_ART = `
+  <path d="M8 166 V70 Q80 54 152 70 V166Z" fill="#d4b98a"/>
+  <path d="M8 70 Q80 54 152 70 L152 78 Q80 62 8 78Z" fill="#bfa273"/>
+  <path d="M104 70 Q132 62 152 70 V92 H104Z" fill="#d4b98a"/>
+  <g fill="#6a4f32">
+    ${colosseumRow(80, 22, 8, 14, 146)}
+    ${colosseumRow(106, 24, 8, 14, 146)}
+    ${colosseumRow(134, 28, 8, 14, 146)}
+  </g>
+  <g fill="#bfa273"><rect x="8" y="103" width="144" height="3"/><rect x="8" y="130" width="144" height="3"/></g>
+  <g fill="#6f9a5a"><circle cx="152" cy="148" r="10"/><circle cx="6" cy="152" r="9"/></g>
+  <rect x="0" y="166" width="160" height="4" fill="#a8905f"/>
+`;
+
 // ---------- The whole route ----------
 // lon      : longitude in degrees (east is positive). Sets his local solar time: every 15 degrees is one hour.
 // kmToNext : worked out below from the coordinates (walking road is about 20% longer than a straight line).
@@ -734,11 +868,11 @@ const CITIES = [
   { id: 'lisbon',      name: 'Lisbon',       country: 'Portugal',     lat: 38.722, lon: -9.139, art: LISBON_ART,   dish: { name: 'pastel de nata', art: dishPlate('#efc873', '#f4f0e4') } },
   { id: 'madrid',      name: 'Madrid',       country: 'Spain',        lat: 40.417, lon: -3.704, art: MADRID_ART,   dish: { name: 'churros',    art: dishRoll('#d9a05b', '#d9a05b') } },
   { id: 'paris',       name: 'Paris',        country: 'France',       lat: 48.857, lon: 2.352, art: PARIS_ART,    dish: { name: 'croissant',  art: dishRoll('#d98c2b', '#d98c2b') } },
-  { id: 'london',      name: 'London',       country: 'UK',           lat: 51.507, lon: -0.128,   dish: { name: 'fish and chips', art: dishPlate('#e0a43a', '#efd48a') } },
-  { id: 'amsterdam',   name: 'Amsterdam',    country: 'Netherlands',  lat: 52.370, lon: 4.895,    dish: { name: 'stroopwafel', art: dishPlate('#d9a05b', '#8a5a2b') } },
-  { id: 'berlin',      name: 'Berlin',       country: 'Germany',      lat: 52.520, lon: 13.405,   dish: { name: 'currywurst', art: dishPlate('#c0392b', '#d9a05b') } },
-  { id: 'vienna',      name: 'Vienna',       country: 'Austria',      lat: 48.208, lon: 16.373,   dish: { name: 'schnitzel',  art: dishPlate('#e0b055', '#f2e04a') } },
-  { id: 'rome',        name: 'Rome',         country: 'Italy',        lat: 41.903, lon: 12.496,   dish: { name: 'carbonara',  art: dishPlate('#f0dba0', '#6b4a2b') } },
+  { id: 'london',      name: 'London',       country: 'UK',           lat: 51.507, lon: -0.128, art: LONDON_ART,   dish: { name: 'fish and chips', art: dishPlate('#e0a43a', '#efd48a') } },
+  { id: 'amsterdam',   name: 'Amsterdam',    country: 'Netherlands',  lat: 52.370, lon: 4.895, art: AMSTERDAM_ART,    dish: { name: 'stroopwafel', art: dishPlate('#d9a05b', '#8a5a2b') } },
+  { id: 'berlin',      name: 'Berlin',       country: 'Germany',      lat: 52.520, lon: 13.405, art: BERLIN_ART,   dish: { name: 'currywurst', art: dishPlate('#c0392b', '#d9a05b') } },
+  { id: 'vienna',      name: 'Vienna',       country: 'Austria',      lat: 48.208, lon: 16.373, art: VIENNA_ART,   dish: { name: 'schnitzel',  art: dishPlate('#e0b055', '#f2e04a') } },
+  { id: 'rome',        name: 'Rome',         country: 'Italy',        lat: 41.903, lon: 12.496, art: ROME_ART,   dish: { name: 'carbonara',  art: dishPlate('#f0dba0', '#6b4a2b') } },
   { id: 'athens',      name: 'Athens',       country: 'Greece',       lat: 37.984, lon: 23.728,   dish: { name: 'gyros',      art: dishRoll('#efd9a0', '#c0392b') } },
   { id: 'istanbul',    name: 'Istanbul',     country: 'Turkey',       lat: 41.008, lon: 28.978,   dish: { name: 'simit',      art: dishPlate('#d98c2b', '#efd48a') } },
   { id: 'tbilisi',     name: 'Tbilisi',      country: 'Georgia',      lat: 41.715, lon: 44.827,   dish: { name: 'khachapuri', art: dishPlate('#efc873', '#f2e04a') } },
