@@ -357,12 +357,12 @@ function captionNow(state, rowing, dishName) {
   const trip = from + ' to ' + to;
   let doing;
   switch (state.activity) {
-    case 'waiting':  doing = 'He sets off from ' + from + ' on ' + new Date(LAUNCH_MS).toLocaleString([], { dateStyle: 'long', timeStyle: 'short' }); break;
+    case 'waiting':  doing = 'He sets off from ' + from + ' on ' + new Date(LAUNCH_MS).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }); break;
     case 'sleeping': doing = 'Sleeping: it is night where he is'; break;
     case 'walking':  doing = (rowing ? 'Rowing from ' : 'Walking from ') + trip; break;
     default:         doing = 'Meal break' + (dishName ? ': ' + dishName : '') + ' \u00b7 ' + trip;
   }
-  return doing + '  \u00b7  ' + day;
+  return state.activity === 'waiting' ? doing : doing + '  \u00b7  ' + day;
 }
 const starsEl  = document.getElementById('stars');
 const sunEl    = document.getElementById('sun');
@@ -557,7 +557,7 @@ function luminance(hex) {
   });
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
-const INK_DARK = '#2b2f36', INK_LIGHT = '#f4efe3';
+const INK_DARK = '#14171c', INK_LIGHT = '#ffffff';
 function readableOn(background) {
   const L = luminance(background);
   const contrastDark  = (L + 0.05) / (luminance(INK_DARK) + 0.05);
@@ -619,8 +619,12 @@ function drawSky(solarMinutes) {
   rootStyle.setProperty('--sky-bottom', sky.bottom);
   // Text colour: whichever of dark or light reads better against the sky right now (blending the two
   // would pass through a grey that vanishes against the dusk and dawn colours)
-  rootStyle.setProperty('--ink',        readableOn(sky.top));
-  rootStyle.setProperty('--ink-low',    readableOn(sky.bottom));
+  const inkTop = readableOn(sky.top), inkLow = readableOn(sky.bottom);
+  const shadowFor = ink => ink === INK_LIGHT ? '0 1px 3px rgba(0, 0, 20, 0.55)' : '0 1px 2px rgba(255, 255, 255, 0.55)';
+  rootStyle.setProperty('--ink',            inkTop);
+  rootStyle.setProperty('--ink-shadow',     shadowFor(inkTop));
+  rootStyle.setProperty('--ink-low',        inkLow);
+  rootStyle.setProperty('--ink-low-shadow', shadowFor(inkLow));
   rootStyle.setProperty('--ground',     sky.ground);
   cityDim = 1 - sky.veil;                               // at night the cities fade into the dark sky
   starsEl.setAttribute('opacity', sky.stars.toFixed(2));
@@ -716,11 +720,21 @@ requestAnimationFrame(frame);
 
 // Browsers only allow sound after a tap, so the page starts silent and the first tap anywhere turns it on.
 let audioUnlocked = false;
+
+// The switch shows one of three things: 'locked' (nothing has been tapped yet), 'on' or 'off'
+function showSoundState() {
+  const state = !audioUnlocked ? 'locked' : soundOn ? 'on' : 'off';
+  soundBtn.dataset.state = state;
+  soundBtn.setAttribute('aria-label', state === 'on' ? 'Sound is on. Tap to turn it off' : 'Sound is off. Tap to turn it on');
+  soundBtn.title = state === 'on' ? 'Sound on' : 'Sound off';
+}
+
 function unlockAudio() {
   if (audioUnlocked) return;
   audioUnlocked = true;
   setUpAudio();                       // must happen inside a tap, or the browser blocks sound
-  soundBtn.textContent = soundOn ? 'Sound: on' : 'Sound: off';
+  body.classList.add('audio-on');     // hides the "tap anywhere for sound" hint
+  showSoundState();
   goFullscreenOnPhones();
   scheduleNextStep();
   updateSea();
@@ -733,7 +747,7 @@ document.addEventListener('keydown', unlockAudio);
 soundBtn.addEventListener('click', () => {
   if (!audioUnlocked) { unlockAudio(); return; }      // the first tap only switches the sound on
   soundOn = !soundOn;
-  soundBtn.textContent = soundOn ? 'Sound: on' : 'Sound: off';
+  showSoundState();
   updateSea();                        // fade the sea in or out with the button
 });
 

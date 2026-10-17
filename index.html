@@ -257,14 +257,23 @@
       <text id="labelRight" class="city-label" x="510"  y="288"></text>
     </svg>
 
-    <div class="controls">
-      <button id="sound" type="button">Tap for sound</button>
-    </div>
   </main>
+
+  <!-- Sound switch, top right: a speaker that is on, off, or (before the first tap) off with a pulse -->
+  <button id="sound" class="sound-toggle" type="button" data-state="locked" aria-label="Sound is off. Tap to turn it on" title="Sound">
+    <svg class="ico ico-on" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/>
+      <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.8a9 9 0 0 1 0 12.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <svg class="ico ico-off" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/>
+      <path d="M16 9l6 6M22 9l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
 
   <!-- A short explanation for someone who has just arrived. app.js fills in the second line. -->
   <div class="caption">
-    <p class="cap-main">A man is walking around the world for peace, city to city, in real time. What you see here is happening right now.</p>
+    <p class="cap-main">A man is walking the world for peace, city to city, in real time.</p>
     <p id="capNow" class="cap-now"></p>
   </div>
 

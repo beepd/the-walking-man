@@ -103,8 +103,9 @@ button {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 0 clamp(10px, 3vw, 28px);
-  color: var(--ink, #2b2f36);
+  padding: 0 clamp(60px, 8vw, 84px) 0 clamp(14px, 3vw, 28px);
+  color: var(--ink, #14171c);
+  text-shadow: var(--ink-shadow, none);
   pointer-events: none;
   font-variant-numeric: tabular-nums;   /* digits all the same width, so the numbers do not jiggle */
 }
@@ -114,10 +115,10 @@ button {
 .hud-center { flex: 2; align-items: center; text-align: center; }
 .hud-right  { flex: 1; align-items: flex-end; text-align: right; }
 
-.hud-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
-.hud-value { font-size: clamp(13px, 2.2vw, 18px); font-weight: 600; }
-.hud-big   { font-size: clamp(20px, 4.4vw, 34px); font-weight: 700; line-height: 1.1; }
-.hud-small { font-size: 12px; opacity: 0.8; }
+.hud-label { font-size: clamp(12px, 1.7vw, 14px); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.9; }
+.hud-value { font-size: clamp(16px, 2.8vw, 24px); font-weight: 700; }
+.hud-big   { font-size: clamp(26px, 5.4vw, 44px); font-weight: 800; line-height: 1.1; }
+.hud-small { font-size: clamp(13px, 1.9vw, 16px); font-weight: 600; opacity: 1; }
 
 /* ---------- Resting (meals and sleep) ----------
    While he is not walking, the walking animations are switched off and every part is set to
@@ -394,10 +395,30 @@ button {
 /* these are for land only */
 .rowing .camp { display: none; }
 
-/* ---------- Controls ---------- */
-.controls {
-  display: flex;
-  gap: 10px;
+/* ---------- Sound switch (top right) ---------- */
+.sound-toggle {
+  position: fixed;
+  top: 8px;
+  right: clamp(10px, 2.4vw, 22px);
+  z-index: 7;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(20, 23, 28, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.sound-toggle .ico { width: 24px; height: 24px; grid-area: 1 / 1; }
+.sound-toggle[data-state="on"]  .ico-off { display: none; }
+.sound-toggle[data-state="off"] .ico-on,
+.sound-toggle[data-state="locked"] .ico-on { display: none; }
+.sound-toggle[data-state="locked"] { animation: sound-pulse 1.8s ease-out infinite; }
+@keyframes sound-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.65), 0 2px 8px rgba(0, 0, 0, 0.25); }
+  100% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0), 0 2px 8px rgba(0, 0, 0, 0.25); }
 }
 
 /* A phone held upright: ask the person to turn it sideways */
@@ -426,17 +447,18 @@ button {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 8px;
+  bottom: 10px;
   z-index: 4;
   padding: 0 16px;
   text-align: center;
-  color: var(--ink-low, #2b2f36);
+  color: var(--ink-low, #14171c);
+  text-shadow: var(--ink-low-shadow, none);
   pointer-events: none;
 }
 .caption p { margin: 0; }
-.rowing .caption { color: #f4f8fb; text-shadow: 0 1px 3px rgba(0, 20, 40, 0.45); }   /* over the water */
-.cap-main { font-size: clamp(11px, 1.7vw, 14px); opacity: 0.85; }
-.cap-now  { font-size: clamp(11px, 1.7vw, 14px); font-weight: 600; margin-top: 2px !important; opacity: 0.95; }
+.cap-main  { font-size: clamp(13px, 2.1vw, 18px); font-weight: 500; }
+.cap-now   { font-size: clamp(14px, 2.3vw, 20px); font-weight: 700; margin-top: 3px !important; }
+.rowing .caption { color: #ffffff; text-shadow: 0 1px 3px rgba(0, 20, 40, 0.6); }   /* over the water */
 
 /* ---------- Demo banner ---------- */
 .demo-note {
