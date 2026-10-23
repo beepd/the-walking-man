@@ -48,6 +48,7 @@ Meals are local dishes (vada pav in Mumbai, sushi in Tokyo, and so on).
 | File | What it does |
 |---|---|
 | `route.html`, `route.css`, `route.js`, `geo.js` | The route page: world map with his live position, and a card for every stop |
+| `about.html`, `privacy.html` | Text pages (needed for AdSense) |
 | `index.html` | Page layout and the SVG scene (the man, tent, campfire, HUD) |
 | `style.css` | Look, animations and poses |
 | `journey.js` | The clock-driven journey: launch time, daily routine, where he is at any moment |

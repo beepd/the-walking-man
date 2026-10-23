@@ -80,3 +80,12 @@ footer a { color: var(--amber); }
   #map { min-width: 820px; }
   #labels text { font-size: 12px; }
 }
+
+/* Text pages (About, Privacy) */
+.prose { max-width: 720px; padding-bottom: 10px; }
+.prose p, .prose li { color: #dbe3f0; font-size: 17px; }
+.prose ul { padding-left: 22px; }
+.prose li { margin: 6px 0; }
+.prose a { color: var(--amber); }
+.prose h2 { margin-top: 30px; }
+footer a + a::before { content: ''; }
