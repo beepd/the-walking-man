@@ -3,24 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Walking Man</title>
+  <title>The Walking Man · walking the world for peace, live</title>
+  <meta name="description" content="A man is walking around the world for peace, city to city, in real time. Open the page and see exactly where he is right now.">
+  <meta name="theme-color" content="#cfe6f5">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="The Walking Man">
+  <meta property="og:description" content="A man is walking around the world for peace, city to city, in real time. See where he is right now.">
+  <meta property="og:image" content="https://beepd.github.io/the-walking-man/og.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="started">
+
+  <!-- Shown only on a phone held upright, next to the sound button -->
+  <div class="brand">The Walking Man</div>
 
   <!-- The numbers along the top. app.js fills them in every second. -->
   <div class="hud">
     <div class="hud-item hud-left">
       <span class="hud-label">On the road</span>
       <span id="hudElapsed" class="hud-value">-</span>
+      <span id="hudDay" class="hud-small"></span>
     </div>
     <div class="hud-item hud-center">
       <span id="hudNextLabel" class="hud-label">Next stop</span>
       <span id="hudCountdown" class="hud-big">-</span>
+      <!-- a thin line that fills up as he gets closer to the next city -->
+      <span class="hud-track" aria-hidden="true"><i id="hudTrack"></i></span>
       <span id="hudStatus" class="hud-small"></span>
     </div>
     <div class="hud-item hud-right">
-      <span class="hud-label">Distance travelled</span>
+      <span class="hud-label">Distance</span>
       <span id="hudKm" class="hud-value">-</span>
       <span id="hudClock" class="hud-small"></span>
     </div>
@@ -37,14 +51,6 @@
         <radialGradient id="glow-fire"><stop offset="0" stop-color="#ffb347" stop-opacity="1"/><stop offset="1" stop-color="#ff8a2b" stop-opacity="0"/></radialGradient>
         <linearGradient id="t-pack"  x1="0" y1="0" x2="1" y2="1"><stop stop-color="#294765"/><stop offset="1" stop-color="#142B45"/></linearGradient>
       </defs>
-
-      <!-- The city he left (left) and the city he is walking to (right).
-           app.js fills these in. The art is drawn in a 160 x 170 box, so these
-           translate() values place each box with its bottom edge on the ground. -->
-      <g id="cityLeft"></g>
-      <g id="localsLeft"></g>
-      <g id="cityRight"></g>
-      <g id="localsRight"></g>
 
       <!-- Sky objects. The sun and moon travel across the middle, between the two cities. -->
       <g id="sky">
@@ -63,14 +69,37 @@
         </g>
       </g>
 
+      <!-- Scenery behind the cities. app.js draws the clouds and hills once; the CSS makes them drift. -->
+      <g id="clouds"></g>
+      <g id="hills">
+        <g class="drift drift-far"><path id="hillFar" class="hill-far"/></g>
+        <g class="drift drift-near"><path id="hillNear" class="hill-near"/></g>
+      </g>
+
+      <!-- The land he walks on: it runs past the edges of the picture, down to the bottom of the page.
+           The darker strip along the top is the road. -->
+      <g id="land">
+        <rect class="land-fill" x="-2400" y="258" width="4800" height="3000"/>
+        <rect class="road" x="-2400" y="258" width="4800" height="11"/>
+        <line class="tufts tufts-1" x1="-2400" y1="303" x2="2400" y2="303"/>
+        <line class="tufts tufts-2" x1="-2400" y1="348" x2="2400" y2="348"/>
+      </g>
+
+      <!-- The city he left (left) and the city he is walking to (right).
+           app.js fills these in. The art is drawn in a 160 x 170 box, so these
+           translate() values place each box with its bottom edge on the ground. -->
+      <g id="cityLeft"></g>
+      <g id="localsLeft"></g>
+      <g id="cityRight"></g>
+      <g id="localsRight"></g>
 
       <!-- The sea, used on the legs he rows. The back wave sits behind the boat. -->
       <g id="sea">
         <g class="wave wave-back"><path class="sea-back" d="M-2400 265 q20 -10 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 V3000 H-2400 Z"/></g>
       </g>
 
-      <!-- The ground: a dashed line that slides left, so the man looks like he moves right -->
-      <line class="ground" x1="-200" y1="262" x2="600" y2="262"/>
+      <!-- The white dashes down the middle of the road slide left, so the man looks like he moves right -->
+      <line class="ground" x1="-2400" y1="263.5" x2="2400" y2="263.5"/>
 
       <!-- Everything that sits on the water rocks together, so it all lives in one group.
            The boat points right (the way he travels). He sits facing the stern, like a real rower. -->
@@ -259,7 +288,8 @@
 
   </main>
 
-  <a class="route-link" href="route.html">The route</a>
+  <a class="chip chip-left" href="route.html">The route</a>
+  <a class="chip chip-right" href="about.html">About</a>
 
   <!-- Sound switch, top right: a speaker that is on, off, or (before the first tap) off with a pulse -->
   <button id="sound" class="sound-toggle" type="button" data-state="locked" aria-label="Sound is off. Tap to turn it on" title="Sound">
@@ -273,19 +303,15 @@
     </svg>
   </button>
 
-  <!-- A short explanation for someone who has just arrived. app.js fills in the second line. -->
+  <!-- What he is doing right now (app.js fills it in), and a short explanation for someone who has just arrived. -->
   <div class="caption">
-    <p class="cap-main">A man is walking the world for peace, city to city, in real time.</p>
     <p id="capNow" class="cap-now"></p>
+    <p class="cap-main">A man is walking the world for peace, city to city, in real time.</p>
+    <p class="cap-rotate">Rotate for the wide view</p>
   </div>
 
   <!-- Only shown in demo mode (?demo) -->
   <div id="demoNote" class="demo-note" hidden></div>
-
-  <!-- Shown only on a phone held upright -->
-  <div id="rotate" class="rotate-hint">
-    <p>Rotate your phone to walk with him</p>
-  </div>
 
   <script src="cities.js"></script>
   <script src="journey.js"></script>

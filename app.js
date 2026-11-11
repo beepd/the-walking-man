@@ -340,6 +340,8 @@ const STATUS_TEXT = {
 const MEALS = ['breakfast', 'lunch', 'snack', 'dinner'];
 
 const hudClock = document.getElementById('hudClock');
+const hudDay   = document.getElementById('hudDay');
+const hudTrack = document.getElementById('hudTrack');
 const capNow   = document.getElementById('capNow');
 
 // The line under the picture that tells a newcomer what he is doing right now
@@ -352,8 +354,7 @@ function captionNow(state, rowing, dishName) {
   const lapStart = lap === 0 ? LAUNCH_MS : getLeg(lap * CITIES.length - 1).endMs;
   const nowMs    = LAUNCH_MS + state.msOnRoad;
   const dayInLap = Math.min(TOTAL_DAYS, Math.floor((nowMs - lapStart) / 86400000) + 1);
-  const day = (lap > 0 ? 'Lap ' + (lap + 1) + ' \u00b7 ' : '') + 'Day ' + dayInLap + ' of about ' + TOTAL_DAYS.toLocaleString() +
-              ' \u00b7 ' + CITIES.length + ' cities';
+  const day = (lap > 0 ? 'Lap ' + (lap + 1) + ' \u00b7 ' : '') + 'Day ' + dayInLap + ' of about ' + TOTAL_DAYS.toLocaleString();
   const trip = from + ' to ' + to;
   let doing;
   switch (state.activity) {
@@ -362,7 +363,7 @@ function captionNow(state, rowing, dishName) {
     case 'walking':  doing = (rowing ? 'Rowing from ' : 'Walking from ') + trip; break;
     default:         doing = 'Meal break' + (dishName ? ': ' + dishName : '') + ' \u00b7 ' + trip;
   }
-  return state.activity === 'waiting' ? doing : doing + '  \u00b7  ' + day;
+  return { doing, day: state.activity === 'waiting' ? CITIES.length + ' cities \u00b7 about ' + TOTAL_DAYS.toLocaleString() + ' days' : day };
 }
 const starsEl  = document.getElementById('stars');
 const sunEl    = document.getElementById('sun');
@@ -436,7 +437,7 @@ function showLeg(leg) {
   localsRight.innerHTML = crowdArt(leg.to, 'welcome');
   labelLeft.textContent  = leg.from.name;
   labelRight.textContent = leg.to.name;
-  hudNextLabel.textContent = 'Next stop: ' + leg.to.name;
+  hudNextLabel.textContent = 'Next stop \u00b7 ' + leg.to.name;
   bigLeft  = bigScaleFor(cityLeft);
   bigRight = bigScaleFor(cityRight);
   shownLeg = leg.index;
@@ -457,7 +458,21 @@ let cityDim = 1;           // 1 in daylight, lower at night (set by drawSky)
 // The destination city grows until it is bigger than he is (1.4 x), then slides past behind him
 // and becomes the city he has left. Positions are the centre of each city, in scene units.
 const CITY_SMALL = 0.35, GROUND_Y = 258;
-const FAR_RIGHT = 510, NEAR_RIGHT = 440, NEAR_LEFT = -70, FAR_LEFT = -110;   // city centres, in scene units
+let FAR_RIGHT = 510, NEAR_RIGHT = 440, NEAR_LEFT = -70, FAR_LEFT = -110;   // city centres, in scene units
+
+// ---------- Phone held upright ----------
+// The wide picture (800 x 300) would be tiny on an upright phone. So there we show a narrower, taller
+// window onto the same scene (440 x 400, centred on the man) and bring the two cities in closer.
+const sceneEl  = document.getElementById('scene');
+const uprightQuery = window.matchMedia('(orientation: portrait) and (max-width: 700px)');
+let upright = false;
+function applyLayout() {
+  upright = uprightQuery.matches;
+  [FAR_LEFT, NEAR_LEFT, NEAR_RIGHT, FAR_RIGHT] = upright ? [30, 100, 380, 395] : [-110, -70, 440, 510];
+  sceneEl.setAttribute('viewBox', upright ? '-10 -60 440 400' : '-200 0 800 300');
+}
+applyLayout();
+uprightQuery.addEventListener('change', () => { applyLayout(); lastSkyKey = -1; });   // also redraw the sky for the new shape
 const lerp   = (a, b, t) => a + (b - a) * t;
 const smooth = t => { t = Math.min(1, Math.max(0, t)); return t * t * (3 - 2 * t); };
 
@@ -467,7 +482,9 @@ function placeCity(group, locals, label, cx, scale, opacity, localsOpacity) {
   locals.setAttribute('transform', t);
   group.style.opacity  = opacity;
   locals.style.opacity = localsOpacity;
-  label.setAttribute('x', cx.toFixed(1));
+  // On an upright phone the city names stay inside the screen edges (unless the city itself has slid away)
+  const labelX = upright && cx > 20 ? Math.min(368, Math.max(52, cx)) : cx;
+  label.setAttribute('x', labelX.toFixed(1));
 }
 
 // progress goes from 0 (just left) to 1 (arrived). msToArrival and msSinceStart drive the welcome.
@@ -509,6 +526,14 @@ function formatDuration(ms) {
   const s = total % 60;
   const two = n => String(n).padStart(2, '0');
   return (d > 0 ? d + 'd ' : '') + two(h) + 'h ' + two(m) + 'm ' + two(s) + 's';
+}
+
+// The same, but as HTML with the letters marked up, so the CSS can make the units (d h m s) smaller than the digits
+function durationHTML(ms) {
+  return formatDuration(ms).replace(/(\d+)([dhms])/g, '<b>$1</b><i>$2</i>');
+}
+function setHTML(element, html) {
+  if (element.dataset.shown !== html) { element.dataset.shown = html; element.innerHTML = html; }
 }
 
 // Only touch the page when the text really changed
@@ -593,21 +618,61 @@ function skyAt(hour) {
     const delay = (random() * 4).toFixed(2);
     out += `<circle class="star" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" style="animation-delay:-${delay}s"/>`;
   }
+  // A scatter of smaller, still stars above and beside the picture, for tall and very wide screens
+  for (let i = 0; i < 120; i++) {
+    const x = -600 + random() * 1600;
+    const y = -430 + random() * 520;
+    out += `<circle class="star-still" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(0.6 + random() * 0.8).toFixed(1)}" opacity="${(0.35 + random() * 0.5).toFixed(2)}"/>`;
+  }
   starsEl.innerHTML = out;
 })();
 
+// ---------- Clouds and hills ----------
+// Both are drawn once here. The CSS slides them slowly to the left, so the world seems to pass by.
+
+// One cloud is a few overlapping ovals with a flat bottom
+function cloudArt(scale) {
+  return `<g transform="scale(${scale})"><ellipse cx="0" cy="0" rx="26" ry="11"/><ellipse cx="-18" cy="4" rx="17" ry="8"/>
+    <ellipse cx="20" cy="4" rx="19" ry="8"/><ellipse cx="6" cy="-8" rx="14" ry="10"/><rect x="-34" y="3" width="72" height="9" rx="4.5"/></g>`;
+}
+(function makeClouds() {
+  // x and y: where it starts, size, seconds to cross the sky, and how see-through it is
+  const clouds = [[-120, 62, 1.25, 260, 0.9], [330, 104, 0.8, 340, 0.7], [640, 48, 1.0, 300, 0.8],
+                  [130, -40, 1.5, 380, 0.75], [520, -130, 1.1, 420, 0.6], [-40, -230, 1.3, 460, 0.55]];
+  document.getElementById('clouds').innerHTML = clouds.map(([x, y, size, seconds, alpha]) =>
+    // 1600 units is one full trip; the negative delay starts each cloud part-way along it
+    `<g transform="translate(0 ${y})" opacity="${alpha}"><g class="cloud" style="animation-duration:${seconds}s;animation-delay:-${(seconds * (1 - (x + 500) / 1600)).toFixed(1)}s">${cloudArt(size)}</g></g>`
+  ).join('');
+})();
+
+// A line of rolling hills made from two waves added together. Because both waves fit a whole number of
+// times into `period`, the shape repeats exactly, and sliding it left by one period loops without a jump.
+function hillPath(period, baseY, height1, height2) {
+  let d = 'M-1400 280';
+  for (let x = -1400; x <= 1800; x += 20) {
+    const a = 2 * Math.PI * x / period;
+    d += ` L${x} ${(baseY - height1 * Math.sin(a) - height2 * Math.sin(3 * a + 1.3)).toFixed(1)}`;
+  }
+  return d + ' L1800 280 Z';
+}
+document.getElementById('hillFar').setAttribute('d',  hillPath(800, 232, 13, 6));
+document.getElementById('hillNear').setAttribute('d', hillPath(600, 247, 8, 4));
+
 // Put the sun or moon on its arc. p goes from 0 (rising) to 1 (setting).
 function placeInSky(element, p) {
-  const x = 10 + p * 380;
-  const y = 175 - 105 * Math.sin(Math.PI * p);
+  // They come up from behind the hills just behind him and set far off to the right. That way they pass
+  // behind his body while still low, and are well clear of his face (and his lunch) for the rest of the day.
+  // On an upright phone the arc is narrower, to stay on screen.
+  const x = 150 + p * (upright ? 270 : 450);
+  const y = 250 - 180 * Math.sin(Math.PI * p);
   element.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
   element.setAttribute('opacity', Math.min(1, Math.max(0, Math.min(p, 1 - p) * 14)).toFixed(2));
 }
 
 let lastSkyKey = -1;
 
-function drawSky(solarMinutes) {
-  const key = Math.round(solarMinutes * 2);            // redraw twice a minute, no more
+function drawSky(solarMinutes, rowing) {
+  const key = Math.round(solarMinutes * 2) + (rowing ? 0.5 : 0);   // redraw twice a minute, no more
   if (key === lastSkyKey) return;
   lastSkyKey = key;
 
@@ -619,20 +684,35 @@ function drawSky(solarMinutes) {
   rootStyle.setProperty('--sky-bottom', sky.bottom);
   // Text colour: whichever of dark or light reads better against the sky right now (blending the two
   // would pass through a grey that vanishes against the dusk and dawn colours)
-  const inkTop = readableOn(sky.top), inkLow = readableOn(sky.bottom);
+  // The land, the road and the hills. They darken with the night and take a little colour from the sky,
+  // so at sunset everything glows warm.
+  const night = Math.min(1, sky.veil / 0.45);
+  const land  = mixColour(mixColour('#e3d7b3', '#151e3b', night), sky.bottom, 0.18);
+  const seaFront = mixColour('#3a86b0', '#12254a', night);
+  rootStyle.setProperty('--land',      land);
+  rootStyle.setProperty('--road',      mixColour(mixColour('#b9ad92', '#2a3458', night), sky.bottom, 0.12));
+  rootStyle.setProperty('--tuft',      mixColour(land, readableOn(land), 0.16));
+  rootStyle.setProperty('--hill-far',  mixColour(mixColour('#b9d0c2', '#1a2749', night), sky.bottom, 0.55));
+  rootStyle.setProperty('--hill-near', mixColour(mixColour('#a3c09e', '#17223f', night), sky.bottom, 0.3));
+  rootStyle.setProperty('--cloud',     mixColour('#ffffff', sky.bottom, 0.3));
+  rootStyle.setProperty('--cloud-show', (0.85 * (1 - 0.9 * night)).toFixed(2));
+  const themeColour = document.querySelector('meta[name="theme-color"]');
+  if (themeColour) themeColour.setAttribute('content', sky.top);
+
+  // The words at the bottom sit on the land (or on the sea while he rows)
+  const inkTop = readableOn(sky.top), inkLow = readableOn(rowing ? seaFront : land);
   const shadowFor = ink => ink === INK_LIGHT ? '0 1px 3px rgba(0, 0, 20, 0.55)' : '0 1px 2px rgba(255, 255, 255, 0.55)';
   rootStyle.setProperty('--ink',            inkTop);
   rootStyle.setProperty('--ink-shadow',     shadowFor(inkTop));
   rootStyle.setProperty('--ink-low',        inkLow);
   rootStyle.setProperty('--ink-low-shadow', shadowFor(inkLow));
-  rootStyle.setProperty('--ground',     sky.ground);
+  rootStyle.setProperty('--ground',     mixColour('#f7f0dd', '#6a7696', night));
   cityDim = 1 - sky.veil;                               // at night the cities fade into the dark sky
   starsEl.setAttribute('opacity', sky.stars.toFixed(2));
 
   // The sea gets darker with the night, in step with the cities fading
-  const night = Math.min(1, sky.veil / 0.45);
   rootStyle.setProperty('--sea-back',  mixColour('#6fb1d1', '#1d3563', night));
-  rootStyle.setProperty('--sea-front', mixColour('#3a86b0', '#12254a', night));
+  rootStyle.setProperty('--sea-front', seaFront);
 
   // Sun from 06:00 to 18:00, moon from 18:00 to 06:00
   if (hour >= 6 && hour < 18) {
@@ -655,7 +735,7 @@ function frame() {
   const state = journeyAt(now);
 
   if (state.leg.index !== shownLeg) showLeg(state.leg);
-  drawSky(state.solarMinutes);
+  drawSky(state.solarMinutes, FORCE_ROW || state.from.mode === 'row');
   drawCities(state.progress, state.msToArrival, Math.max(0, now - state.leg.startMs), state.leg.index);
 
   // Meals and sleep: stand still, and stop the footsteps
@@ -691,17 +771,20 @@ function frame() {
     foodArt.style.transform = `scale(${(0.62 * (1 - 0.85 * state.activityProgress)).toFixed(3)})`;
   }
 
-  setText(hudClock, 'Time where he is: ' + formatClock(state.solarMinutes));
-  setText(capNow, captionNow(state, rowing, dishName));
+  setText(hudClock, formatClock(state.solarMinutes) + ' where he is');
+  const caption = captionNow(state, rowing, dishName);
+  setText(capNow, caption.doing);
+  setText(hudDay, caption.day);
+  hudTrack.style.width = (state.progress * 100).toFixed(1) + '%';
 
-  setText(hudElapsed,   formatDuration(state.msOnRoad));
+  setHTML(hudElapsed,   durationHTML(state.msOnRoad));
   // Before the launch the big countdown is the time until he sets off, not the time to Pune
   const waiting = state.activity === 'waiting';
-  setText(hudNextLabel, waiting ? 'Setting off from ' + state.from.name + ' in' : 'Next stop: ' + state.to.name);
-  setText(hudCountdown, formatDuration(waiting ? LAUNCH_MS - now : state.msToArrival));
-  setText(hudKm,        Math.round(state.totalKm).toLocaleString() + ' km');
+  setText(hudNextLabel, waiting ? 'Setting off from ' + state.from.name + ' in' : 'Next stop \u00b7 ' + state.to.name);
+  setHTML(hudCountdown, durationHTML(waiting ? LAUNCH_MS - now : state.msToArrival));
+  setHTML(hudKm,        '<b>' + Math.round(state.totalKm).toLocaleString() + '</b><i>km</i>');
   const toGo = Math.max(0, Math.round(state.leg.km - state.kmInLeg));
-  setText(hudStatus,    ((state.activity === 'walking' && rowing) ? 'Rowing' : (STATUS_TEXT[state.activity] || '')) + (dishName ? ': ' + dishName : '') + '  \u00b7  ' + toGo + ' km to go');
+  setText(hudStatus,    ((state.activity === 'walking' && rowing) ? 'Rowing' : (STATUS_TEXT[state.activity] || '')) + (dishName ? ': ' + dishName : '') + '  \u00b7  ' + toGo.toLocaleString() + ' km to go');
 
   if (DEMO_ON) {
   const note = document.getElementById('demoNote');

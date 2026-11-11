@@ -38,7 +38,9 @@ Meals are local dishes (vada pav in Mumbai, sushi in Tokyo, and so on).
 - A top bar shows time on the road, a countdown to the next city, distance travelled, and the time where he is.
 - A line at the bottom says what he is doing right now.
 - Sound (footsteps, sea, crickets, fire) is off until you tap anywhere. The speaker button at top right turns it on and off.
-- Best on a phone held sideways. Text colour adapts to the sky for readability.
+- Clouds drift across the sky and soft hills roll by behind the cities. The land, road and hills change colour with the time of day.
+- A thin line under the countdown fills up as he gets closer to the next city.
+- Best on a phone held sideways. Held upright, the page shows a narrower, taller view centred on him. Text colour adapts to the sky and the land for readability.
 
 ## Try it
 - `?demo` or `?demo=30` — starts a quick demo of walking and arriving (the number is the seconds per leg).
@@ -49,6 +51,7 @@ Meals are local dishes (vada pav in Mumbai, sushi in Tokyo, and so on).
 |---|---|
 | `route.html`, `route.css`, `route.js`, `geo.js` | The route page: world map with his live position, and a card for every stop |
 | `about.html`, `privacy.html` | Text pages (needed for AdSense) |
+| `favicon.svg`, `og.png` | The browser tab icon, and the picture shown when the link is shared |
 | `index.html` | Page layout and the SVG scene (the man, tent, campfire, HUD) |
 | `style.css` | Look, animations and poses |
 | `journey.js` | The clock-driven journey: launch time, daily routine, where he is at any moment |

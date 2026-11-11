@@ -9,6 +9,7 @@
   --sea: #6ec3ff;
 }
 * { box-sizing: border-box; }
+html { background: var(--bg); }     /* so the page is never white below the glow, on any browser */
 body {
   margin: 0;
   background: radial-gradient(1200px 600px at 50% -10%, #17335c 0%, var(--bg) 60%) fixed;

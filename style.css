@@ -4,13 +4,14 @@
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden;      /* the page never scrolls; the sea is allowed to spill past the edges */
+  overflow: hidden;      /* the page never scrolls; the land and sea are allowed to spill past the edges */
 }
 
 body {
-  /* soft sky: light at the bottom, a little deeper blue at the top */
-  background: linear-gradient(to bottom, var(--sky-top, #cfe6f5) 0%, var(--sky-bottom, #f6efe2) 100%);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* the sky: deeper at the top, paler toward the horizon. app.js changes the two colours through the day */
+  background: linear-gradient(to bottom, var(--sky-top, #cfe6f5) 0%, var(--sky-bottom, #f6efe2) 72%);
+  /* rounded letters where the device has them (iPhone, Mac), the normal system font everywhere else */
+  font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,11 +22,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
 }
 
-/* The SVG scales to the screen but never gets taller than about 70% of the height.
-   overflow: visible lets the sea run past the edges of the picture, right across the page. */
+/* The SVG scales to the screen but never gets taller than about two thirds of the height.
+   overflow: visible lets the land, sea and sky run past the edges of the picture, right across the page. */
 #scene {
   overflow: visible;
   width: min(95vw, 190vh);
@@ -33,31 +33,58 @@ body {
   height: auto;
 }
 
-button {
-  font: inherit;
-  padding: 8px 22px;
-  border: 0;
-  border-radius: 999px;
-  background: #2b2f36;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  cursor: pointer;
-}
+/* ---------- Land, road and shadow ---------- */
+#scene .land-fill { fill: var(--land, #e3d7b3); }
+#scene .road      { fill: var(--road, #b9ad92); }
 
-/* ---------- Ground and shadow ---------- */
+/* the dashes down the middle of the road */
 #scene .ground {
-  stroke: var(--ground, #9a8f7a);
-  stroke-width: 4;
+  stroke: var(--ground, #f7f0dd);
+  stroke-width: 2.2;
   stroke-linecap: round;
-  stroke-dasharray: 40 54;          /* 40 dash + 54 gap = 94 per pattern repeat */
+  stroke-dasharray: 34 60;          /* 34 dash + 60 gap = 94 per pattern repeat */
   animation: ground-slide 0.6s linear infinite;
 }
 
-#scene .shadow { fill: rgba(60, 50, 40, 0.14); }
+#scene .shadow { fill: rgba(40, 32, 24, 0.22); }
 
 @keyframes ground-slide {
   from { stroke-dashoffset: 0; }
   to   { stroke-dashoffset: 94; }
+}
+
+/* Little marks on the land in front of the road. Being nearer to us, they pass by faster. */
+#scene .tufts {
+  stroke: var(--tuft, #cdbf9b);
+  stroke-linecap: round;
+  animation: ground-slide 0.6s linear infinite;
+}
+#scene .tufts-1 { stroke-width: 2.4; stroke-dasharray: 7 181;  animation-duration: 0.9s;  animation-name: tuft-slide-1; }
+#scene .tufts-2 { stroke-width: 3.2; stroke-dasharray: 11 271; animation-duration: 1.05s; animation-name: tuft-slide-2; }
+@keyframes tuft-slide-1 { to { stroke-dashoffset: 188; } }
+@keyframes tuft-slide-2 { to { stroke-dashoffset: 282; } }
+@media (max-height: 560px) { #scene .tufts-2 { display: none; } }   /* on a phone that row would run under the words */
+
+/* ---------- Clouds and hills ---------- */
+#clouds { fill: var(--cloud, #fff); opacity: var(--cloud-show, 0.85); }
+.cloud  { animation: cloud-drift 300s linear infinite; }
+@keyframes cloud-drift {
+  from { transform: translateX(1100px); }
+  to   { transform: translateX(-500px); }
+}
+
+#scene .hill-far  { fill: var(--hill-far,  #d4dfd0); }
+#scene .hill-near { fill: var(--hill-near, #bccfb2); }
+.drift-far  { animation: hills-far  200s linear infinite; }
+.drift-near { animation: hills-near 75s  linear infinite; }
+@keyframes hills-far  { to { transform: translateX(-800px); } }
+@keyframes hills-near { to { transform: translateX(-600px); } }
+
+/* When he stops for a meal or for the night, the world stops passing by */
+.resting .drift, .resting #scene .tufts { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud, .drift, #scene .tufts { animation: none; }
 }
 
 
@@ -96,29 +123,57 @@ button {
 /* ---------- The numbers along the top ---------- */
 .hud {
   position: fixed;
-  top: 8px;
+  top: clamp(8px, 2.2vh, 20px);
   left: 0;
   right: 0;
   z-index: 5;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 0 clamp(60px, 8vw, 84px) 0 clamp(14px, 3vw, 28px);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;     /* the countdown in the middle takes the room it needs */
+  align-items: start;
+  column-gap: 12px;
+  padding: 0 clamp(64px, 8vw, 88px) 0 clamp(14px, 3vw, 32px);   /* the extra room on the right is for the sound button */
   color: var(--ink, #14171c);
   text-shadow: var(--ink-shadow, none);
   pointer-events: none;
   font-variant-numeric: tabular-nums;   /* digits all the same width, so the numbers do not jiggle */
 }
 
-.hud-item   { display: flex; flex-direction: column; }
-.hud-left   { flex: 1; align-items: flex-start; }
-.hud-center { flex: 2; align-items: center; text-align: center; }
-.hud-right  { flex: 1; align-items: flex-end; text-align: right; }
+.hud-item   { display: flex; flex-direction: column; min-width: 0; }
+.hud-left   { align-items: flex-start; }
+.hud-center { align-items: center; text-align: center; }
+.hud-right  { align-items: flex-end; text-align: right; }
 
-.hud-label { font-size: clamp(12px, 1.7vw, 14px); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.9; }
-.hud-value { white-space: nowrap; font-size: clamp(15px, 2.4vw, 20px); font-weight: 700; }
-.hud-big   { font-size: clamp(26px, 5.4vw, 44px); font-weight: 800; line-height: 1.1; }
-.hud-small { font-size: clamp(13px, 1.9vw, 16px); font-weight: 600; opacity: 1; }
+.hud-label { font-size: clamp(10px, 1.35vw, 13px); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.72; white-space: nowrap; }
+.hud-value { font-size: clamp(15px, 2.3vw, 24px); font-weight: 700; line-height: 1.25; white-space: nowrap; }
+.hud-big   { font-size: clamp(26px, 4.6vw, 54px); font-weight: 800; line-height: 1.08; letter-spacing: -0.01em; white-space: nowrap; }
+.hud-small { font-size: clamp(11px, 1.5vw, 15px); font-weight: 600; opacity: 0.8; white-space: nowrap; }
+
+/* Digits are bold, the units after them (d h m s km) are smaller and lighter, so the numbers stand out */
+.hud b { font-weight: inherit; }
+.hud i { font-style: normal; font-weight: 600; font-size: 0.52em; opacity: 0.7; margin: 0 0.42em 0 0.08em; }
+.hud i:last-child { margin-right: 0; }
+
+/* How far along this stretch he is: a thin line that fills from left to right */
+.hud-track {
+  width: clamp(120px, 20vw, 240px);
+  height: 4px;
+  margin: 6px 0 5px;
+  border-radius: 99px;
+  background: rgba(127, 127, 127, 0.28);
+  overflow: hidden;
+}
+.hud-track i {
+  display: block;
+  height: 100%;
+  width: 0;
+  margin: 0;
+  opacity: 1;
+  border-radius: 99px;
+  background: #f0a23a;
+}
+
+/* The name of the page. Only shown on a phone held upright (see the end of this file). */
+.brand { display: none; }
 
 /* ---------- Resting (meals and sleep) ----------
    While he is not walking, the walking animations are switched off and every part is set to
@@ -182,6 +237,7 @@ button {
 }
 
 /* Stars twinkle gently */
+#scene .star-still { fill: #fff; }
 #scene .star {
   fill: #fff;
   animation: twinkle 3.2s ease-in-out infinite alternate;
@@ -276,8 +332,9 @@ button {
 .rowing #sea, .rowing #boatBack, .rowing #boatFront, .rowing #oarNear, .rowing #oarFar { opacity: 1; }
 .rowing #seaFront { opacity: 0.88; }          /* a little see-through, so you can make out the oar blades */
 
-#scene .ground { transition: opacity 0.8s ease; }
+#scene .ground, #land, #hills { transition: opacity 0.8s ease; }
 .rowing #scene .ground,
+.rowing #land, .rowing #hills,
 .rowing #scene .shadow { opacity: 0; }
 
 /* City names sit on the water while rowing, so they get light text */
@@ -395,99 +452,152 @@ button {
 /* these are for land only */
 .rowing .camp { display: none; }
 
-/* ---------- Sound switch (top right) ---------- */
-.sound-toggle {
+/* ---------- Sound switch (top right) and the two links (bottom corners) ----------
+   All three are see-through "glass" buttons that take their colour from the text around them,
+   so they stay readable by day and by night. */
+.sound-toggle, .chip {
   position: fixed;
-  top: 8px;
-  right: clamp(10px, 2.4vw, 22px);
   z-index: 7;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ink-low, #14171c);
+  background: rgba(127, 127, 127, 0.16);
+  background: color-mix(in srgb, var(--ink-low, #14171c) 9%, transparent);
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  border: 1px solid color-mix(in srgb, var(--ink-low, #14171c) 26%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background 0.2s ease;
+}
+.sound-toggle:hover, .chip:hover {
+  background: color-mix(in srgb, var(--ink-low, #14171c) 18%, transparent);
+}
+
+.sound-toggle {
+  top: clamp(8px, 2.2vh, 20px);
+  right: clamp(10px, 2.4vw, 24px);
   width: 44px;
   height: 44px;
   padding: 0;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: rgba(20, 23, 28, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  /* this one sits on the sky, so it follows the colour of the words at the top */
+  color: var(--ink, #14171c);
+  background: color-mix(in srgb, var(--ink, #14171c) 9%, transparent);
+  border-color: color-mix(in srgb, var(--ink, #14171c) 26%, transparent);
 }
-.sound-toggle .ico { width: 24px; height: 24px; grid-area: 1 / 1; }
+.sound-toggle .ico { width: 22px; height: 22px; grid-area: 1 / 1; }
 .sound-toggle[data-state="on"]  .ico-off { display: none; }
 .sound-toggle[data-state="off"] .ico-on,
 .sound-toggle[data-state="locked"] .ico-on { display: none; }
 .sound-toggle[data-state="locked"] { animation: sound-pulse 1.8s ease-out infinite; }
 @keyframes sound-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.65), 0 2px 8px rgba(0, 0, 0, 0.25); }
-  100% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0), 0 2px 8px rgba(0, 0, 0, 0.25); }
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ink, #14171c) 45%, transparent); }
+  100% { box-shadow: 0 0 0 14px transparent; }
 }
 
-/* A phone held upright: ask the person to turn it sideways */
-.rotate-hint {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 24px;
-  background: #2b2f36;
-  color: #fff;
-  font-size: 20px;
+.chip {
+  bottom: clamp(10px, 2.4vh, 22px);
+  padding: 8px 14px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
+.chip-left  { left:  clamp(10px, 2.4vw, 24px); }
+.chip-right { right: clamp(10px, 2.4vw, 24px); }
+.rowing .chip { color: #fff; background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.4); }   /* over the water */
 
-.rotate-hint p { margin: 0; }
-
-@media (orientation: portrait) and (max-width: 700px) {
-  .rotate-hint { display: flex; }
-}
-
-/* ---------- The explanation at the bottom ---------- */
+/* ---------- The words at the bottom ---------- */
 .caption {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 10px;
+  bottom: clamp(10px, 2.4vh, 22px);
   z-index: 4;
-  padding: 0 16px;
+  padding: 0 clamp(96px, 13vw, 140px);      /* keeps clear of the two links in the corners */
   text-align: center;
   color: var(--ink-low, #14171c);
-  text-shadow: var(--ink-low-shadow, none);
   pointer-events: none;
 }
 .caption p { margin: 0; }
-.cap-main  { font-size: clamp(13px, 2.1vw, 18px); font-weight: 500; }
-.cap-now   { font-size: clamp(14px, 2.3vw, 20px); font-weight: 700; margin-top: 3px !important; }
-.rowing .caption { color: #ffffff; text-shadow: 0 1px 3px rgba(0, 20, 40, 0.6); }   /* over the water */
+.cap-now   { font-size: clamp(15px, 2.1vw, 21px); font-weight: 700; line-height: 1.25; }
+.cap-main  { font-size: clamp(12px, 1.55vw, 15px); font-weight: 500; opacity: 0.78; margin-top: 2px !important; }
+.cap-rotate { display: none; }
+.rowing .caption { color: #ffffff; }   /* over the water */
 
 /* ---------- Demo banner ---------- */
 .demo-note {
   position: fixed;
   left: 0;
   right: 0;
-  top: 70px;
+  top: 46%;
   z-index: 5;
   text-align: center;
   font-size: 12px;
   letter-spacing: 0.04em;
-  color: var(--ink-low, #2b2f36);
-  opacity: 0.75;
+  color: var(--ink, #2b2f36);
+  opacity: 0.6;
   pointer-events: none;
+  display: none;                     /* app.js un-hides it in demo mode; shown only on bigger screens */
 }
-.demo-note[hidden] { display: none; }
+@media (min-height: 600px) { .demo-note:not([hidden]) { display: block; top: auto; bottom: 90px; color: var(--ink-low, #2b2f36); } }
 
-/* ---------- Link to the route page (bottom left) ---------- */
-.route-link {
-  position: fixed;
-  left: 10px;
-  bottom: 10px;
-  z-index: 7;
-  padding: 7px 12px;
-  border-radius: 99px;
-  background: rgba(20, 23, 28, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
+/* ---------- A phone held upright ----------
+   app.js switches the picture to a narrower, taller window centred on the man (see applyLayout).
+   Here the numbers are stacked: the countdown first, then the two smaller ones side by side.
+   The picture sits low on the screen, so the sky has room for the numbers. */
+@media (orientation: portrait) and (max-width: 700px) {
+  body { align-items: flex-end; }
+  .scene { margin-bottom: 118px; }
+  #scene { width: 100vw; max-height: 58vh; }
+
+  .brand {
+    display: block;
+    position: fixed;
+    top: 20px;
+    left: 18px;
+    z-index: 5;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink, #14171c);
+    text-shadow: var(--ink-shadow, none);
+  }
+  .sound-toggle { top: 8px; right: 12px; }
+
+  .hud {
+    top: 66px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "next next" "road dist";
+    row-gap: 14px;
+    padding: 0 18px;
+  }
+  .hud-center { grid-area: next; }
+  .hud-left   { grid-area: road; }
+  .hud-right  { grid-area: dist; }
+  .hud-label { font-size: 11px; }
+  .hud-big   { font-size: clamp(28px, 9.4vw, 44px); }
+  .hud-value { font-size: 19px; }
+  .hud-small { font-size: 12px; }
+  .hud-track { width: 56vw; }
+
+  .caption { bottom: 60px; padding: 0 16px; }
+  .cap-now  { font-size: 16px; }
+  .cap-main { font-size: 12px; }
+  .chip { bottom: 12px; }
+  .cap-rotate {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 21px;
+    font-size: 11.5px;
+    font-weight: 600;
+    opacity: 0.6;
+    padding: 0 96px;
+  }
 }
